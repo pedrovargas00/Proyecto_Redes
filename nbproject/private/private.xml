@@ -3,10 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Lógica/ServidorEco.java</file>
-            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Controlador/ControladorGrafico.java</file>
-            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Lógica/ClienteEco.java</file>
-            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Vista/ChatR.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Lógica/Cliente.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Lógica/Servidor.java</file>
         </group>
     </open-files>
 </project-private>

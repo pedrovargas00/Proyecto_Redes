@@ -100,10 +100,9 @@ public class VentanaLogin extends JFrame  implements MouseListener{
             passwordText.setText("");
             userText.setText("");
             if(usuario.length() != 0 && pass.length() != 0){
-                    if(controladorGrafico.accedeUsuario(usuario, pass)){
-                        controladorGrafico.mostrarContactos();
-                        cerrarLogin();
-                    }
+                controladorGrafico.datosLogin(usuario, pass);
+                controladorGrafico.indicadorLogin(1);
+                cerrarLogin();
             }
         });
     }

@@ -107,6 +107,8 @@ public class VentanaRegistro extends JFrame{
             String pass = new String(arrayC);
             String usuario = jtUsuario.getText(); 
             if(usuario.length() != 0 && pass.length() != 0){
+                controladorGrafico.datosRegistro(usuario, pass);
+                controladorGrafico.indicadorLogin(0);
                 if(!controladorGrafico.existeUsuario(usuario)){
                     JOptionPane.showMessageDialog(null, "Registro exitoso", "", JOptionPane.DEFAULT_OPTION, exitoso);
                     controladorGrafico.mostrarLogin();

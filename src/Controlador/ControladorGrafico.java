@@ -1,6 +1,6 @@
 package Controlador;
 import Vista.*;
-import Lógica.ClienteEco;
+import Lógica.Cliente;
 import java.util.ArrayList;
 
 public class ControladorGrafico{
@@ -11,7 +11,7 @@ public class ControladorGrafico{
     private VentanaContactos vC;
     private VentanaUsuarios vU;
     private VentanaChat vChat;
-    private ClienteEco cliente;
+    private Cliente cliente;
 
     public ControladorGrafico(){}
     
@@ -19,12 +19,12 @@ public class ControladorGrafico{
         return vLogin;
     }
 
-    public void setCliente(ClienteEco cliente){
+    public void setCliente(Cliente cliente){
         
         this.cliente = cliente;
     }
     
-    public ClienteEco getCliente(){
+    public Cliente getCliente(){
         
         return cliente;
     }
@@ -130,29 +130,21 @@ public class ControladorGrafico{
     //return modelo.existeUsuraio(usuario)
         return false;
     }
-    public boolean accedeUsuario(String usuario, String contrasena){
-        System.out.println("Usuario: " + usuario + "Contraseña " + contrasena);
-        //if(modelo.accedeUsuario(usuario, contrasena))
-        return true;
+    
+    public void indicadorLogin(int login){
+        
+        cliente.setLogin(login);
     }
     
-    public String getLoginUsuario(){
+    public void datosLogin(String usuario, String contrasenia){
         
-        return vLogin.getUsuario();
+        cliente.setUsuario(usuario);
+        cliente.setContrasenia(contrasenia);
     }
     
-    public String getLoginPassword(){
+    public void datosRegistro(String usuario, String contrasenia){
         
-        return vLogin.getPassword();
-    }
-    
-    public String getRegistroUsuario(){
-        
-        return vRegistro.getUsuario();
-    }
-    
-    public String getRegistroPassword(){
-        
-        return vRegistro.getPassword();
+        cliente.setUsuario(vRegistro.getUsuario());
+        cliente.setContrasenia(vRegistro.getPassword());
     }
 }
