@@ -9,13 +9,13 @@ public class VentanaRegistro extends JFrame{
 
     private ControladorGrafico controladorGrafico;
     private JPanel pBase;
-    private JButton bRegistrar;    
+    private JButton bRegistrar;
     private JTextField jtUsuario;
     private JPasswordField jtContrasena;
     private JLabel jlUsuario, jlContrasena, jlImagen, jlIndicaciones;
     private final Font fuente = new Font("Comic sans MS", Font.PLAIN, 20);
-    private final ImageIcon registrarUsuario = new ImageIcon("src/Recursos/registrar2.png");
-    private final ImageIcon exitoso = new ImageIcon("src/Recursos/chek.png");    
+    private final ImageIcon registrarUsuario = new ImageIcon("/Recursos/registrar2.png");
+    private final ImageIcon exitoso = new ImageIcon("/Recursos/chek.png");
     private final Color LightBlue = new Color(173, 216, 230);
     private final Color CadetBlue = new Color(95, 158, 160);
 
@@ -41,10 +41,10 @@ public class VentanaRegistro extends JFrame{
         return controladorGrafico;
     }
 
-    public void setControladorGráfico(ControladorGrafico controladorGrafico){
+    public void setControladorGrafico(ControladorGrafico controladorGrafico){
         this.controladorGrafico = controladorGrafico;
     }
-    
+
     public final void initComponentes(){
 
         bRegistrar = new JButton("Registrar");
@@ -69,7 +69,7 @@ public class VentanaRegistro extends JFrame{
         jlContrasena.setBackground(LightBlue);
         jlContrasena.setFont(fuente);
         jlContrasena.setSize(290, 28);
-        jlContrasena.setLocation(62, 300);            
+        jlContrasena.setLocation(62, 300);
 
         jtContrasena = new JPasswordField();
         jtContrasena.setBackground(CadetBlue);
@@ -79,7 +79,7 @@ public class VentanaRegistro extends JFrame{
 
         jlImagen = new JLabel();
         jlImagen.setBackground(LightBlue);
-        jlImagen.setSize(150, 150);         
+        jlImagen.setSize(150, 150);
         jlImagen.setIcon(registrarUsuario);
         jlImagen.setLocation(135,60);
 
@@ -91,7 +91,7 @@ public class VentanaRegistro extends JFrame{
 
         pBase = new JPanel();
         pBase.setBackground(LightBlue);
-        pBase.setLayout(null);            
+        pBase.setLayout(null);
         pBase.add(jlIndicaciones);
         pBase.add(jlImagen);
         pBase.add(jlUsuario);
@@ -101,39 +101,39 @@ public class VentanaRegistro extends JFrame{
         pBase.add(bRegistrar);
 
         add(pBase);
-            
+
         bRegistrar.addActionListener((ActionEvent e) -> {
-            char[] arrayC = jtContrasena.getPassword();    
+            char[] arrayC = jtContrasena.getPassword();
             String pass = new String(arrayC);
-            String usuario = jtUsuario.getText(); 
+            String usuario = jtUsuario.getText();
             if(usuario.length() != 0 && pass.length() != 0){
                 controladorGrafico.datosRegistro(usuario, pass);
                 controladorGrafico.indicadorLogin(0);
                 if(!controladorGrafico.existeUsuario(usuario)){
                     JOptionPane.showMessageDialog(null, "Registro exitoso", "", JOptionPane.DEFAULT_OPTION, exitoso);
                     controladorGrafico.mostrarLogin();
-                    cerrarRegistro();                
+                    cerrarRegistro();
                 }else{
                     JOptionPane.showMessageDialog(null, "El usuario ya existe, pruebe con otro nombre de usuario", "", JOptionPane.ERROR_MESSAGE);
-                }       
+                }
             }
         });
     }
-    
+
     public String getUsuario(){
-        
+
         return jtUsuario.getText();
     }
-    
+
     public String getPassword(){
-        
+
         return String.valueOf(jtContrasena.getPassword());
     }
-    
+
     public void cerrarRegistro(){
             this.dispose();
     }
-    
+
     public void mostrarRegistro(){
           this.setVisible(true);
     }
