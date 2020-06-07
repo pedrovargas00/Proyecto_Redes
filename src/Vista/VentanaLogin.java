@@ -48,7 +48,7 @@ public class VentanaLogin extends JFrame  implements MouseListener{
         userLabel.setFont(fuente);
         userLabel.setBounds(155, 210, 80, 25);
 
-        passwordLabel = new JLabel("Contraseña");
+        passwordLabel = new JLabel("  Clave  ");
         passwordLabel.setBackground(LightBlue);
         passwordLabel.setFont(fuente);
         passwordLabel.setBounds(140, 300, 150, 25);
@@ -86,35 +86,43 @@ public class VentanaLogin extends JFrame  implements MouseListener{
         getContentPane().add(userLabel);
         getContentPane().add(userText);
         getContentPane().add(passwordLabel);
-        getContentPane().add(passwordText); 
-        getContentPane().add(registro); 
-        getContentPane().setLayout(null);    
+        getContentPane().add(passwordText);
+        getContentPane().add(registro);
+        getContentPane().setLayout(null);
         getContentPane().setBackground(LightBlue);
 
         login.addActionListener((ActionEvent e) -> {
             //Aquí le debe avisar al controlador para que desde el modelo le mande el arreglo correspondiente de contactos
-            //mientas le pongo uno          
-            char[] arrayC = passwordText.getPassword();    
+            //mientas le pongo uno
+            char[] arrayC = passwordText.getPassword();
             String pass = new String(arrayC);
-            String usuario = userText.getText(); 
+            String usuario = userText.getText();
             passwordText.setText("");
             userText.setText("");
             if(usuario.length() != 0 && pass.length() != 0){
                 controladorGrafico.datosLogin(usuario, pass);
                 controladorGrafico.indicadorLogin(1);
-                cerrarLogin();
-                controladorGrafico.mostrarContactos();
+                //controladorGrafico.mostrarContactos();
             }
         });
     }
-    
+
+    public void mostrarContactos(boolean mostrar){
+          if(mostrar){
+            cerrarLogin();
+            controladorGrafico.mostrarContactos();
+          }else
+            JOptionPane.showMessageDialog(null, "access denied", "", JOptionPane.ERROR_MESSAGE);
+
+    }
+
     public String getUsuario(){
-        
+
         return userText.getText();
     }
-    
+
     public String getPassword(){
-        
+
         return String.valueOf(passwordText.getPassword());
     }
 
@@ -125,7 +133,7 @@ public class VentanaLogin extends JFrame  implements MouseListener{
                userText.setText("");
                controladorGrafico.mostrarRegistro();
                cerrarLogin();
-        } 
+        }
     }
 
     @Override
@@ -143,7 +151,7 @@ public class VentanaLogin extends JFrame  implements MouseListener{
     @Override
     public void mouseExited(MouseEvent me) {
     }
-        
+
     public void cerrarLogin(){
             this.setVisible(false);
     }

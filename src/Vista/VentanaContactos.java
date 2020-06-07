@@ -6,16 +6,15 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class VentanaContactos extends JFrame implements MouseListener{
-    
+public class VentanaContactos extends JFrame{
+
     private ControladorGrafico controladorGrafico;
     private JPanel pBase;
     private JButton bAgregarContacto;
     private ArrayList<JButton> bConversar;
-    private ArrayList<JLabel> lContactos;    
-    private final ImageIcon iniciarConversacion = new ImageIcon("src/Recursos/conversar.png");
-    private final ImageIcon agregarContactos = new ImageIcon("src/Recursos/mas.png");
-    private final ImageIcon mensaje = new ImageIcon("src/Recursos/mensaje.png");
+    private ArrayList<JLabel> lContactos;
+    private final ImageIcon agregarContactos = new ImageIcon(getClass().getResource("/Recursos/mas.png"));
+    private final ImageIcon mensaje = new ImageIcon(getClass().getResource("/Recursos/mensaje.png"));
     private final Font fuenteNombres = new Font("Comic sans MS", Font.PLAIN, 20);
     private final Color LightBlue = new Color(173, 216, 230);
 
@@ -29,14 +28,14 @@ public class VentanaContactos extends JFrame implements MouseListener{
         this.setVisible(true);
 
         initComponentes(nombresContactos);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent eve) {
                 controladorGrafico.mostrarLogin();
                 cerrarContactos(0);
             }
         });
     }
-    
+
     public ControladorGrafico getControladorGrafico(){
         return controladorGrafico;
     }
@@ -44,21 +43,23 @@ public class VentanaContactos extends JFrame implements MouseListener{
     public void setControladorGrafico(ControladorGrafico controladorGrafico){
         this.controladorGrafico = controladorGrafico;
     }
-    
+
     public final void initComponentes(ArrayList<String> nombresContactos){
 
         bAgregarContacto = new JButton();
         bAgregarContacto.setSize(45, 45);
         bAgregarContacto.setIcon(agregarContactos);
-        bAgregarContacto.addMouseListener(this);
         bAgregarContacto.setBackground(LightBlue);
         bAgregarContacto.setBorder(null);
-
+        bAgregarContacto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                botones_actionPerformed(e);
+            }
+        });
         if(!nombresContactos.isEmpty()){
+            int i, x1 = 0, x2 = 355, y = 0;
             bConversar = new ArrayList<>();
             lContactos = new ArrayList<>();
-            int i, x1 = 0, x2 = 355, y = 0; 
-
             for(i = 0; i < nombresContactos.size(); i++){
                 JLabel nombre = new JLabel();
                 nombre.setFont(fuenteNombres);
@@ -72,7 +73,11 @@ public class VentanaContactos extends JFrame implements MouseListener{
                 b.setSize(45, 45);
                 b.setIcon(mensaje);
                 b.setLocation(x2,y);
-                b.addMouseListener(this);
+                b.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        botones_actionPerformed(e);
+                    }
+                });
                 b.setBackground(LightBlue);
                 b.setBorder(null);
                 bConversar.add(b);
@@ -93,7 +98,7 @@ public class VentanaContactos extends JFrame implements MouseListener{
         }else{
             JLabel nombre = new JLabel();
             nombre.setFont(fuenteNombres);
-            nombre.setText("Aún no tiene ningún contacto");
+            nombre.setText("No tiene contactos");
             nombre.setSize(355, 45);
             nombre.setLocation(0,0);
             nombre.setBackground(LightBlue);
@@ -103,41 +108,29 @@ public class VentanaContactos extends JFrame implements MouseListener{
             pBase = new JPanel();
             pBase.setLayout(null);
             pBase.setBackground(LightBlue);
-            pBase.add(bAgregarContacto);
             pBase.add(nombre);
-        }    
+            pBase.add(bAgregarContacto);
+
+        }
         add(pBase);
+
+
     }
 
-    @Override
-    public void mouseClicked(MouseEvent evento) {
-        if(evento.getSource() == bAgregarContacto){
-            if(lContactos.size() < 10){
-                //Aquí le debe avisar al controlador para que desde el modelo le mande el arreglo correspondiente de usuarios
-                //mientas le pongo uno
-                controladorGrafico.mostrarUsuarios();
-                cerrarContactos(1);
-            }    
-        }
+    public void botones_actionPerformed(ActionEvent e) {
+      Object boton=e.getSource();
+      if(boton.equals(bAgregarContacto)){
+          controladorGrafico.mostrarUsuarios();
+          cerrarContactos(1);
+      }else{
         for(int i = 0; i < bConversar.size(); i++){
-            if (evento.getSource() == bConversar.get(i)){
-                controladorGrafico.mostrarChat(lContactos.get(i).getText());
-                cerrarContactos(1);
-            }
+          if (boton.equals(bConversar.get(i))){
+           controladorGrafico.mostrarChat(lContactos.get(i).getText());
+           cerrarContactos(1);
+          }
         }
+      }
     }
-
-    @Override
-    public void mousePressed(MouseEvent me) {}
-
-    @Override
-    public void mouseReleased(MouseEvent me) {}
-
-    @Override
-    public void mouseEntered(MouseEvent me) {}
-
-    @Override
-    public void mouseExited(MouseEvent me) {}
 
     public void cerrarContactos(int opcion){
         if(opcion == 0)
@@ -145,6 +138,7 @@ public class VentanaContactos extends JFrame implements MouseListener{
         if(opcion == 1)
             this.setVisible(false);
     }
+
     public void mostrarContactos(){
           this.setVisible(true);
     }

@@ -14,8 +14,8 @@ public class VentanaRegistro extends JFrame{
     private JPasswordField jtContrasena;
     private JLabel jlUsuario, jlContrasena, jlImagen, jlIndicaciones;
     private final Font fuente = new Font("Comic sans MS", Font.PLAIN, 20);
-    private final ImageIcon registrarUsuario = new ImageIcon("/Recursos/registrar2.png");
-    private final ImageIcon exitoso = new ImageIcon("/Recursos/chek.png");
+    private final ImageIcon registrarUsuario = new ImageIcon(getClass().getResource("/Recursos/registrar2.png"));
+    private final ImageIcon exitoso = new ImageIcon(getClass().getResource("/Recursos/chek.png"));
     private final Color LightBlue = new Color(173, 216, 230);
     private final Color CadetBlue = new Color(95, 158, 160);
 
@@ -65,7 +65,7 @@ public class VentanaRegistro extends JFrame{
         jtUsuario.setLocation(72, 252);
 //        jtUsuario.setBorder(null);
 
-        jlContrasena = new JLabel("Ingrese una contraseña segura");
+        jlContrasena = new JLabel("Ingrese una clave segura");
         jlContrasena.setBackground(LightBlue);
         jlContrasena.setFont(fuente);
         jlContrasena.setSize(290, 28);
@@ -109,13 +109,6 @@ public class VentanaRegistro extends JFrame{
             if(usuario.length() != 0 && pass.length() != 0){
                 controladorGrafico.datosRegistro(usuario, pass);
                 controladorGrafico.indicadorLogin(0);
-                if(!controladorGrafico.existeUsuario(usuario)){
-                    JOptionPane.showMessageDialog(null, "Registro exitoso", "", JOptionPane.DEFAULT_OPTION, exitoso);
-                    controladorGrafico.mostrarLogin();
-                    cerrarRegistro();
-                }else{
-                    JOptionPane.showMessageDialog(null, "El usuario ya existe, pruebe con otro nombre de usuario", "", JOptionPane.ERROR_MESSAGE);
-                }
             }
         });
     }
@@ -136,5 +129,16 @@ public class VentanaRegistro extends JFrame{
 
     public void mostrarRegistro(){
           this.setVisible(true);
+    }
+
+    public void registroExitoso(boolean exito){
+
+      if(exito){
+        JOptionPane.showMessageDialog(null, "Successful ", "", JOptionPane.DEFAULT_OPTION, exitoso);
+        controladorGrafico.mostrarLogin();
+        cerrarRegistro();
+      }else
+        JOptionPane.showMessageDialog(null, "user already exists, try a different username", "", JOptionPane.ERROR_MESSAGE);
+
     }
 }

@@ -63,18 +63,16 @@ public class ControladorGrafico{
         this.vChat = vChat;
     }
 
+    public void permitido(boolean tieneAcceso){
+        this.getvLogin().mostrarContactos(tieneAcceso);
+    }
+
     public void mostrarContactos(){
-        if(this.getvC()!= null){
+        if(this.getvC()!= null)
             vC.mostrarContactos();
-        }
-        //    this.getvC().mostrarContactos();
         else{
-            //ventanaContactos vC = new ventanaContactos(modelo.getContactos());
-            //por el momento
-            ArrayList<String> a = new ArrayList<>();
-            for(int i = 0; i < 2; i++)
-                a.add("María Fernanda Ramos López -> " + (i+1));
-            vC = new VentanaContactos(a);
+
+            vC = new VentanaContactos(cliente.getContactos());
             vC.setControladorGrafico(this);
             this.setvC(vC);
             vC.setVisible(true);
@@ -111,7 +109,7 @@ public class ControladorGrafico{
         else{
             ArrayList<String> a = new ArrayList<>();
             for(int i = 0; i < 11; i++)
-                a.add("María Fernanda Ramos López -> " + (i+1));
+                a.add("User  -> " + (i+1));
             vU = new VentanaUsuarios(a);
             vU.setControladorGrafico(this);
             this.setvU(vU);
@@ -143,5 +141,9 @@ public class ControladorGrafico{
     public void datosRegistro(String usuario, String contrasenia){
         cliente.setUsuario(usuario);
         cliente.setContrasenia(contrasenia);
+    }
+
+    public void registro(boolean registrado){
+      vRegistro.registroExitoso(registrado);
     }
 }

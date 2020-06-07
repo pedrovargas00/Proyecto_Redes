@@ -19,7 +19,7 @@ public class Cliente{
     private ControladorGrafico controlador;
 
     public Cliente(){
-        
+
         this.contactos = new ArrayList();
         this.usuario = "";
         this.contrasenia = "";
@@ -27,78 +27,86 @@ public class Cliente{
         this.mensajeEntrante = "";
         this.mensajeSaliente = "";
     }
-    
+
     public void setControlador(ControladorGrafico controlador){
 
         this.controlador = controlador;
     }
 
     public static String getUsuario() {
+
         return usuario;
     }
 
     public void setUsuario(String usuario) {
+
         this.usuario = usuario;
+        System.out.println("Usuario_" + usuario);
     }
 
     public static String getContrasenia() {
+
         return contrasenia;
     }
 
     public void setContrasenia(String contrasenia) {
+
         this.contrasenia = contrasenia;
+        System.out.println("Con: " + contrasenia);
     }
 
     public static int getLogin() {
+
         return login;
     }
 
     public void setLogin(int login) {
+
         this.login = login;
     }
 
-    public static ArrayList<String> getContactos() {
+    public ArrayList<String> getContactos() {
+
         return contactos;
     }
 
     public void setContactos(ArrayList<String> contactos) {
+
         this.contactos = contactos;
     }
 
     public String getMensajeEntrante() {
+
         return mensajeEntrante;
     }
 
     public void setMensajeEntrante(String mensajeEntrante) {
+
         this.mensajeEntrante = mensajeEntrante;
     }
 
     public String getMensajeSaliente() {
+
         return mensajeSaliente;
     }
 
     public void setMensajeSaliente(String mensajeSaliente) {
+
         this.mensajeSaliente = mensajeSaliente;
     }
 
     private static String mezclar(String messageStr, String password){
 
         StringBuilder message =  new StringBuilder(messageStr);
-
         for(int i = 0; i < password.length(); i++)
             message.insert((i * 42) + password.charAt(i), password.charAt(i));
 
         message.insert(0, password.length());
-
         return message.toString();
     }
 
-    private static void cliente() throws Exception{
+    public void cliente() throws Exception{
 
-        //se obtiene el servidor
-        //String servidor = args[0];
-        //se obtiene el puerto de conexion
-        //int puerto = Integer.parseInt(args[1]);
         String servidor = "localhost";
         int puerto = 9999;
         String mensaje = "", mezcla, entry, finalMd5, contacto;
@@ -106,18 +114,19 @@ public class Cliente{
         String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         Cifrado cifrado = new Cifrado();
         Md5 md5 = new Md5();
-
         try{
             Socket socket = new Socket(servidor, puerto);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ) ,true);
-            
-            while(getLogin() != 1 && getLogin() != 0){}
+            System.out.println("GetLogin: " + getLogin());
+            while(login == -1)
+                System.out.print("");
+
+            System.out.println("--GetLogin: " + getLogin());
             switch(getLogin()){
 
                 case 0:
                     System.out.println("\nRegistro");
-                    //while(getUsuario().isEmpty()){System.out.println("Datos: " + datos[0] + " " + datos[1]);}
                     datos[0] = getUsuario();
                     datos[1] = getContrasenia();
                     System.out.println("--Datos: " + datos[0] + " " + datos[1]);
@@ -127,11 +136,13 @@ public class Cliente{
                     while(true){
                         entry = cifrado.descifrar(entrada.readLine(), clave);
                         if(entry.equalsIgnoreCase("Ya existe")){
-                            System.out.println("***EL USUARIO YA EXISTE***");
-                            break;
+                          controlador.registro(false);
+                          System.out.println("***EL USUARIO YA EXISTE***");
+                          break;
                         } if(entry.equalsIgnoreCase("Agregado")){
-                            System.out.println("***USUARIO AGREGADO***");
-                            break;
+                          System.out.println("***USUARIO AGREGADO***");
+                          controlador.registro(true);
+                          break;
                         }
                     }
                     break;
@@ -151,24 +162,26 @@ public class Cliente{
                             finalMd5 = md5.algoritmoMd5(mezcla);
                             salida.println(finalMd5);
                             if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
-                                System.out.println(cifrado.descifrar(entrada.readLine(), clave));
-                                //socket.close();
-                                //exit(1);
-                                //Continúa chat
-                                //Obtiene contactos
-                                while((contacto = entrada.readLine()) != null)
-                                    getContactos().add(contacto);
+                                if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
+                                    System.out.println("Acceso permitido");
+                                    while((contacto = entrada.readLine()) != null)
+                                        if(!contacto.equalsIgnoreCase("-1"))
+                                            getContactos().add(contacto);
+                                        else
+                                            break;
+                                    controlador.permitido(true);
+                                }else
+                                  controlador.permitido(false);
                             }
                         }
                         if(entry.equalsIgnoreCase("-1")){
-                            System.out.println("El usuario no existe");
+                            controlador.permitido(false);
                             break;
                         }
                     }
                     break;
                 case -1:
                     System.out.println("Saliendo de cliente");
-                    //salida.println("-1");
                     salida.println(cifrado.cifrar("-1", clave));
                     break;
                 default:
@@ -184,42 +197,5 @@ public class Cliente{
             e.printStackTrace();
         }
 
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        VentanaLogin login = new VentanaLogin();
-        ControladorGrafico controlador = new ControladorGrafico();
-        Cliente c = new Cliente();
-
-        login.setVisible(true);
-        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        login.setControladorGrafico(controlador);
-        controlador.setvLogin(login);
-        controlador.setCliente(c);
-        c.cliente();
-        /*Scanner in = new Scanner(System.in);
-        int opcion = 5;
-
-        while(opcion != -1){
-            System.out.print("MENU\n1.- Registro\n2.- Login\n0.- Salir.\n--> ");
-            opcion = in.nextInt();
-            switch(opcion){
-                case 1:
-                    cliente(0);
-                    break;
-                case 2:
-                    cliente(1);
-                    break;
-                case 0:
-                    System.out.println("Saliendo");
-                    cliente(-1);
-                    opcion = -1;
-                    break;
-                default:
-                    System.out.println("Opcion inválida");
-            }
-        }
-        //cliente("Hola");*/
     }
 }

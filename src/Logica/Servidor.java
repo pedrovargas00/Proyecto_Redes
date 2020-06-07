@@ -27,6 +27,7 @@ public class Servidor{
         File archivo = new File(nombreArchivo);
         FileWriter fw = new FileWriter(archivo, true);
 
+        fw.write("\n");
         fw.write(user);
         fw.write(", ");
         fw.write(password);
@@ -38,7 +39,7 @@ public class Servidor{
 
     private void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
 
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt", "rw");
         String auxiliar, in[], cargaArchivo = "";
         long posicion;
 
@@ -72,7 +73,7 @@ public class Servidor{
         String[] in;
         String auxiliar;
         ArrayList<String> contactos = new ArrayList<String>();
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -80,10 +81,10 @@ public class Servidor{
             in = auxiliar.split(",");
             System.out.println("in[0]: " + in[0] + " buscar: " + usuario);
             if(in[0].equalsIgnoreCase(usuario)){
-                auxiliar = bf.readLine();
-                while(auxiliar.contains("-")){
-                    contactos.add(auxiliar.substring(1).trim());
-                    auxiliar = bf.readLine();
+                while((auxiliar = bf.readLine()) != null){
+                    System.out.println("aux: " + auxiliar);
+                    if(auxiliar.startsWith("-"))
+                        contactos.add(auxiliar.substring(1).trim());
                 }
                 return contactos;
             }
@@ -96,7 +97,7 @@ public class Servidor{
         long posicion;
         String[] in;
         String auxiliar, cargaArchivo = "";
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt", "rw");
 
         while((auxiliar = archivo.readLine()) != null){
             in = auxiliar.split(",");
@@ -123,7 +124,7 @@ public class Servidor{
 
         String[] in;
         String auxiliar;
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -136,7 +137,7 @@ public class Servidor{
             }
         }
 
-        return "";
+        return null;
     }
 
     public String mensajeAleatorio(){
@@ -179,7 +180,7 @@ public class Servidor{
 
     public static void main(String[] args) throws IOException {
 
-        servidor("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/" + args[0]);
+        servidor("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/" + args[0]);
 
     }
 }
@@ -221,6 +222,7 @@ class GestorPeticion extends Thread {
 
             while(ex != -1){
                 opcion = Integer.parseInt(cifrado.descifrar(entrada.readLine(), clave));
+                System.out.println("Opcion: " + opcion);
                 switch(opcion){
                     case 0:
                         System.out.println("Registro");
@@ -247,7 +249,7 @@ class GestorPeticion extends Thread {
                             System.out.println("Datos recibidos: " + datos[0]);
                             contraUsuario = servidor.verificarUsuario(datos[0]);
                             System.out.println("Datos: " + datos[0] + " " + datos[1]);
-                            if(!contraUsuario.isEmpty()){
+                            if(contraUsuario != null){
                                 usuarios.put(datos[0], s.getPort());
                                 contraUsuario = contraUsuario.substring(1, contraUsuario.length());
                                 aleatorio = servidor.mensajeAleatorio();
@@ -266,13 +268,11 @@ class GestorPeticion extends Thread {
                                     //exit(1);
                                     //Carga contactos
                                     contactos = servidor.obtenerContactos(datos[0]);
-                                    if(contactos.isEmpty()){
-                                        System.out.println("Sin contactos");
-                                        exit(1);
+                                    if(contactos != null){
+                                        for(int i = 0; i < contactos.size(); i++)
+                                            salida.println(contactos.get(i));
                                     }
-                                    for(int i = 0; i < contactos.size(); i++)
-                                        salida.println(contactos.get(i));
-                                    salida.println();
+                                    salida.println("-1");
                                     //Continúa para chat
                                 } else{
                                     System.out.println("Entra a no final");

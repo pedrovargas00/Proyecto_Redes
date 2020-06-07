@@ -15,12 +15,12 @@ public final class VentanaChat extends JFrame{
     private JTextField jtMensaje;
     private JTextArea jtEmisor, jtReceptor;
     private JButton bEnviar;
-    private final ImageIcon enviarMensaje = new ImageIcon("src/Recursos/enviar.png");
+    private final ImageIcon enviarMensaje = new ImageIcon(getClass().getResource("/Recursos/enviar.png"));
     private final Color LightBlue = new Color(173, 216, 230);
     private final Color CadetBlue = new Color(95, 158, 160);
     private final Font fuenteChat = new Font("Comic sans MS", Font.PLAIN, 20);
     private int saltos= 0;
-        
+
     public VentanaChat(String nombreContacto){
         super(nombreContacto);
         this.setSize(400, 550);
@@ -46,7 +46,7 @@ public final class VentanaChat extends JFrame{
     public void setControladorGrafico(ControladorGrafico controladorGrafico) {
         this.controladorGrafico = controladorGrafico;
     }
-       
+
     public void initComponentes(){
 
         bEnviar = new JButton();
@@ -89,14 +89,14 @@ public final class VentanaChat extends JFrame{
         spMensajes.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
         pBase = new JPanel();
-        pBase.setBackground(LightBlue);            
+        pBase.setBackground(LightBlue);
         pBase.setLayout(null);
         pBase.add(bEnviar);
         pBase.add(jtMensaje);
         pBase.add(spMensajes);
 
         add(pBase);
-        
+
         bEnviar.addActionListener((ActionEvent e) -> {
             String mensaje = jtMensaje.getText();
             jtMensaje.setText("");
@@ -105,7 +105,7 @@ public final class VentanaChat extends JFrame{
                 for(int i = 0; i < saltos; i++)
                     x += "\n";
                 if(mensaje.length() < 20){
-                    jtEmisor.append(x + mensaje);           
+                    jtEmisor.append(x + mensaje);
                     saltos = 1;
                 }else{
                     jtEmisor.append(x);
@@ -119,7 +119,7 @@ public final class VentanaChat extends JFrame{
                     jtEmisor.append(aux);
                     saltos++;
                 }
-                setMensaje("Feet, don’t fail me now Take me to the finish line Oh, my heart, it breaks every step that I take But I’m hoping at the gates, they’ll tell me that you’re mine");
+                setMensaje("Respuesta");
                 //Aquí se envía el mensaje al servidor para que lo ponga en el jtext del contacto
             }
         });
@@ -130,7 +130,7 @@ public final class VentanaChat extends JFrame{
         for(int i = 0; i < saltos; i++)
             x += "\n";
         if(mensaje.length() < 20){
-            jtReceptor.append(x +mensaje);           
+            jtReceptor.append(x +mensaje);
             saltos = 1;
         }
         else{
@@ -146,7 +146,7 @@ public final class VentanaChat extends JFrame{
             saltos++;
         }
     }
-    
+
     public void cerrarChat(){
            this.dispose();
     }

@@ -3,3 +3,8 @@ user2, 9;km}LHe
 user3, [_3Pfm5]
 user4, e;GY2`>t
 user5, y67^2QE3
+nuevo, 12345
+
+-user1
+-user4
+
