@@ -13,9 +13,9 @@ public class VentanaContactos extends JFrame implements MouseListener{
     private JButton bAgregarContacto;
     private ArrayList<JButton> bConversar;
     private ArrayList<JLabel> lContactos;    
-    private final ImageIcon iniciarConversacion = new ImageIcon("src/Recursos/conversar.png");
-    private final ImageIcon agregarContactos = new ImageIcon("src/Recursos/mas.png");
-    private final ImageIcon mensaje = new ImageIcon("src/Recursos/mensaje.png");
+    private final ImageIcon iniciarConversacion = new ImageIcon("/Recursos/conversar.png");
+    private final ImageIcon agregarContactos = new ImageIcon("/Recursos/mas.png");
+    private final ImageIcon mensaje = new ImageIcon("/Recursos/mensaje.png");
     private final Font fuenteNombres = new Font("Comic sans MS", Font.PLAIN, 20);
     private final Color LightBlue = new Color(173, 216, 230);
 
@@ -47,6 +47,7 @@ public class VentanaContactos extends JFrame implements MouseListener{
     
     public final void initComponentes(ArrayList<String> nombresContactos){
 
+        System.out.println("nombreContactos: " + nombresContactos.get(0));
         bAgregarContacto = new JButton();
         bAgregarContacto.setSize(45, 45);
         bAgregarContacto.setIcon(agregarContactos);

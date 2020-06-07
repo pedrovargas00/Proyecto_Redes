@@ -39,6 +39,7 @@ public class Cliente{
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
+        System.out.println("Usuario_" + usuario);
     }
 
     public static String getContrasenia() {
@@ -47,6 +48,7 @@ public class Cliente{
 
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
+        System.out.println("Con: " + contrasenia);
     }
 
     public static int getLogin() {
@@ -57,7 +59,7 @@ public class Cliente{
         this.login = login;
     }
 
-    public static ArrayList<String> getContactos() {
+    public ArrayList<String> getContactos() {
         return contactos;
     }
 
@@ -93,7 +95,7 @@ public class Cliente{
         return message.toString();
     }
 
-    private static void cliente() throws Exception{
+    public void cliente() throws Exception{
 
         //se obtiene el servidor
         //String servidor = args[0];
@@ -111,8 +113,11 @@ public class Cliente{
             Socket socket = new Socket(servidor, puerto);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ) ,true);
+            System.out.println("GetLogin: " + getLogin());
+            while(login == -1)
+                System.out.print("");
             
-            while(getLogin() != 1 && getLogin() != 0){}
+            System.out.println("--GetLogin: " + getLogin());
             switch(getLogin()){
 
                 case 0:
@@ -151,13 +156,22 @@ public class Cliente{
                             finalMd5 = md5.algoritmoMd5(mezcla);
                             salida.println(finalMd5);
                             if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
-                                System.out.println(cifrado.descifrar(entrada.readLine(), clave));
-                                //socket.close();
-                                //exit(1);
-                                //Continúa chat
-                                //Obtiene contactos
-                                while((contacto = entrada.readLine()) != null)
-                                    getContactos().add(contacto);
+                                if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
+                                    System.out.println("Acceso permitido");
+                                    //socket.close();
+                                    //exit(1);
+                                    //Continúa chat
+                                    //Obtiene contactos
+                                    while((contacto = entrada.readLine()) != null)
+                                        if(!contacto.equalsIgnoreCase("-1"))
+                                            getContactos().add(contacto);
+                                        else
+                                            break;
+                                    System.out.println("---" + getContactos().get(1));
+                                    controlador.permitido();
+                                    //controlador.setPermiso(true);
+                                }
+                                
                             }
                         }
                         if(entry.equalsIgnoreCase("-1")){
@@ -186,18 +200,8 @@ public class Cliente{
 
     }
 
-    public static void main(String[] args) throws Exception {
+/*    public static void main(String[] args) throws Exception {
 
-        VentanaLogin login = new VentanaLogin();
-        ControladorGrafico controlador = new ControladorGrafico();
-        Cliente c = new Cliente();
-
-        login.setVisible(true);
-        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        login.setControladorGrafico(controlador);
-        controlador.setvLogin(login);
-        controlador.setCliente(c);
-        c.cliente();
         /*Scanner in = new Scanner(System.in);
         int opcion = 5;
 
@@ -220,6 +224,6 @@ public class Cliente{
                     System.out.println("Opcion inválida");
             }
         }
-        //cliente("Hola");*/
-    }
+        //cliente("Hola");
+    }*/
 }

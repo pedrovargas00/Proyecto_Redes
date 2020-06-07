@@ -12,7 +12,9 @@ public class ControladorGrafico{
     private VentanaUsuarios vU;
     private VentanaChat vChat;
     private Cliente cliente;
-
+    
+    private boolean permiso;
+    
     public ControladorGrafico(){}
 
     public VentanaLogin getvLogin() {
@@ -63,6 +65,21 @@ public class ControladorGrafico{
         this.vChat = vChat;
     }
 
+    public void setPermiso(boolean permiso){
+        
+        this.permiso = permiso;
+    }
+    
+    public boolean getPermiso(){
+        
+        return permiso;
+    }
+    
+    public void permitido(){
+        
+        this.getvLogin().mostrarContactos();
+    }
+    
     public void mostrarContactos(){
         if(this.getvC()!= null){
             vC.mostrarContactos();
@@ -71,10 +88,7 @@ public class ControladorGrafico{
         else{
             //ventanaContactos vC = new ventanaContactos(modelo.getContactos());
             //por el momento
-            ArrayList<String> a = new ArrayList<>();
-            for(int i = 0; i < 2; i++)
-                a.add("María Fernanda Ramos López -> " + (i+1));
-            vC = new VentanaContactos(a);
+            vC = new VentanaContactos(cliente.getContactos());
             vC.setControladorGrafico(this);
             this.setvC(vC);
             vC.setVisible(true);
