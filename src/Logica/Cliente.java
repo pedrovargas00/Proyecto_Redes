@@ -192,6 +192,7 @@ public class Cliente{
                     }
                     break;
                 case -1:
+                //Respaldar
                     System.out.println("Saliendo de cliente");
                     salida.println(cifrado.cifrar("-1", clave));
                     break;

@@ -103,7 +103,11 @@ public class ControladorGrafico{
             vChat.setVisible(true);
         }
     }
-
+    public void actualizarContactos(){
+      vC = new VentanaContactos(cliente.getContactos());
+      vC.setControladorGrafico(this);
+      this.setvC(vC);
+    }
     public void mostrarUsuarios(){
         if(this.getvU() != null)
             this.getvU().mostrarUsuarios();
@@ -145,5 +149,19 @@ public class ControladorGrafico{
 
     public void registro(boolean registrado){
       vRegistro.registroExitoso(registrado);
+    }
+    public boolean esContacto(String nombre){
+      for(int i=0; i<cliente.getContactos().size();i++)
+        if(nombre.equals(cliente.getContactos().get(i)))
+          return true;
+      return false;
+    }
+    public void eliminarContacto(String nombre){
+      for(int i=0; i<cliente.getContactos().size();i++)
+        if(nombre.equals(cliente.getContactos().get(i)))
+          cliente.getContactos().remove(i);
+    }
+    public void agregarContacto(String nuevoContacto){
+      getCliente().getContactos().add(nuevoContacto);
     }
 }

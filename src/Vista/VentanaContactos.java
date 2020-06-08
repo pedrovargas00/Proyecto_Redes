@@ -113,10 +113,7 @@ public class VentanaContactos extends JFrame{
 
         }
         add(pBase);
-
-
     }
-
 
     public void botones_actionPerformed(ActionEvent e) {
       Object boton=e.getSource();

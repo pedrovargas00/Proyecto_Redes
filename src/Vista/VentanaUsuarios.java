@@ -81,16 +81,21 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
             add(pBase);
     }
    }
-
-    @Override
-    public void mouseClicked(MouseEvent evento) {
-        for(int i = 0; i < bAgregar.size(); i++)
-            if (evento.getSource() == bAgregar.get(i)){
-                //se agrega al array de contactos el usuario en la posición i
-                bAgregar.get(i).setIcon(agregado);
-                bAgregar.get(i).setEnabled(false);
-            }
-    }
+   public void mouseClicked(MouseEvent evento) {
+           for(int i = 0; i < bAgregar.size(); i++)
+               if (evento.getSource() == bAgregar.get(i)){
+                   //se agrega al array de contactos el usuario en la posición i
+                   if(!controladorGrafico.esContacto(lNombres.get(i).getText())){
+                     controladorGrafico.agregarContacto(lNombres.get(i).getText());
+                     controladorGrafico.actualizarContactos();
+                     bAgregar.get(i).setIcon(agregado);
+                   }else{
+                     controladorGrafico.eliminarContacto(lNombres.get(i).getText());
+                     controladorGrafico.actualizarContactos();
+                     bAgregar.get(i).setIcon(agregar);
+                   }
+               }
+       }
 
     @Override
     public void mousePressed(MouseEvent me) {}
