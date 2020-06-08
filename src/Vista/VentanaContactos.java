@@ -117,6 +117,7 @@ public class VentanaContactos extends JFrame{
 
     }
 
+
     public void botones_actionPerformed(ActionEvent e) {
       Object boton=e.getSource();
       if(boton.equals(bAgregarContacto)){

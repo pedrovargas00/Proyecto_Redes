@@ -17,10 +17,11 @@ public class Cliente{
     private String mensajeEntrante;
     private String mensajeSaliente;
     private ControladorGrafico controlador;
-
+    private static ArrayList<String> usuarios;
     public Cliente(){
 
         this.contactos = new ArrayList();
+        this.usuarios = new ArrayList();
         this.usuario = "";
         this.contrasenia = "";
         this.login = -1;
@@ -75,6 +76,9 @@ public class Cliente{
         this.contactos = contactos;
     }
 
+    public static ArrayList<String> getUsuarios(){
+      return usuarios;
+    }
     public String getMensajeEntrante() {
 
         return mensajeEntrante;
@@ -109,7 +113,7 @@ public class Cliente{
 
         String servidor = "localhost";
         int puerto = 9999;
-        String mensaje = "", mezcla, entry, finalMd5, contacto;
+        String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
         String datos[] = new String[2];
         String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         Cifrado cifrado = new Cifrado();
@@ -164,6 +168,13 @@ public class Cliente{
                             if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
                                 if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
                                     System.out.println("Acceso permitido");
+
+                                    while ((usuarioT = entrada.readLine())!= null)
+                                        if(!usuarioT.equalsIgnoreCase("-1"))
+                                          getUsuarios().add(usuarioT);
+                                        else
+                                          break;
+
                                     while((contacto = entrada.readLine()) != null)
                                         if(!contacto.equalsIgnoreCase("-1"))
                                             getContactos().add(contacto);

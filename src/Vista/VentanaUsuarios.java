@@ -50,7 +50,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
             lNombres = new ArrayList<>();
             int i = 0, x1 = 0, x2 = 355, y = 0;
 
-            for(i = 0; i < 11; i++){
+            for(i = 0; i < nombresUsuarios.size(); i++){
                 JLabel nombre = new JLabel();
                 nombre.setFont(fuenteNombres);
                 nombre.setText(nombresUsuarios.get(i));
@@ -74,7 +74,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
             pBase = new JPanel();
             pBase.setLayout(null);
             pBase.setBackground(LightBlue);
-            for(i = 0 ; i < 11; i ++){
+            for(i = 0 ; i < nombresUsuarios.size(); i ++){
                 pBase.add(lNombres.get(i));
                 pBase.add(bAgregar.get(i));
             }

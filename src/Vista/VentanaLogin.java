@@ -115,7 +115,6 @@ public class VentanaLogin extends JFrame  implements MouseListener{
             JOptionPane.showMessageDialog(null, "access denied", "", JOptionPane.ERROR_MESSAGE);
 
     }
-
     public String getUsuario(){
 
         return userText.getText();

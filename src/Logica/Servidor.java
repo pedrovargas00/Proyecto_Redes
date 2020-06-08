@@ -39,7 +39,7 @@ public class Servidor{
 
     private void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
 
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt", "rw");
         String auxiliar, in[], cargaArchivo = "";
         long posicion;
 
@@ -73,13 +73,12 @@ public class Servidor{
         String[] in;
         String auxiliar;
         ArrayList<String> contactos = new ArrayList<String>();
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
         while((auxiliar = bf.readLine()) != null){
             in = auxiliar.split(",");
-            System.out.println("in[0]: " + in[0] + " buscar: " + usuario);
             if(in[0].equalsIgnoreCase(usuario)){
                 while((auxiliar = bf.readLine()) != null){
                     System.out.println("aux: " + auxiliar);
@@ -91,13 +90,29 @@ public class Servidor{
         }
         return null;
     }
-
+    public ArrayList<String> obtenerUsuarios(String usuario)throws FileNotFoundException, IOException{
+      String[] in;
+      String auxiliar;
+      ArrayList<String> usuarios = new ArrayList<String>();
+      BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
+      if(bf.ready() == false)
+          System.out.println("El archivo esta vacio - usuarios");
+      System.out.println("Listar usuarios");
+      while((auxiliar = bf.readLine()) != null){
+          if(auxiliar.charAt(0)!='-'){
+            in = auxiliar.split(",");
+            if(!usuario.equals(in[0]))
+              usuarios.add(in[0]);
+          }
+      }
+      return usuarios;
+    }
     public void eliminarContactos(String usuario, String contacto/*, ArrayList<String> contactos*/) throws FileNotFoundException, IOException{
 
         long posicion;
         String[] in;
         String auxiliar, cargaArchivo = "";
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt", "rw");
 
         while((auxiliar = archivo.readLine()) != null){
             in = auxiliar.split(",");
@@ -124,7 +139,7 @@ public class Servidor{
 
         String[] in;
         String auxiliar;
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -180,7 +195,7 @@ public class Servidor{
 
     public static void main(String[] args) throws IOException {
 
-        servidor("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/" + args[0]);
+        servidor("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/" + args[0]);
 
     }
 }
@@ -214,6 +229,7 @@ class GestorPeticion extends Thread {
         String datos[] = new String[2], mensajeCombinado, aleatorio, finalMd5, clienteMd5;
         String contraUsuario;
         ArrayList<String> contactos;
+        ArrayList<String> usuariosT = new ArrayList<String>();
         String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
 
         try{
@@ -266,6 +282,20 @@ class GestorPeticion extends Thread {
                                     //salida.close();
                                     //entrada.close();
                                     //exit(1);
+                                    //Carga usuarios
+
+                                    usuariosT = servidor.obtenerUsuarios(datos[0]);
+                                    if(usuariosT.isEmpty()){
+                                      System.out.println("No hay usuarios-Login");
+                                      exit(1);
+                                    }
+                                    System.out.println("Obteniendo usuarios");
+                                    for(int i = 0; i < usuariosT.size(); i++){
+                                        System.out.println(usuariosT.get(i));
+                                        salida.println(usuariosT.get(i));
+                                    }
+                                    salida.println("-1");
+
                                     //Carga contactos
                                     contactos = servidor.obtenerContactos(datos[0]);
                                     if(contactos != null){

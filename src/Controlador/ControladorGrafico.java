@@ -65,6 +65,7 @@ public class ControladorGrafico{
 
     public void permitido(boolean tieneAcceso){
         this.getvLogin().mostrarContactos(tieneAcceso);
+
     }
 
     public void mostrarContactos(){
@@ -107,9 +108,8 @@ public class ControladorGrafico{
         if(this.getvU() != null)
             this.getvU().mostrarUsuarios();
         else{
-            ArrayList<String> a = new ArrayList<>();
-            for(int i = 0; i < 11; i++)
-                a.add("User  -> " + (i+1));
+          System.out.println("ventana"+cliente.getUsuarios().get(0));
+          ArrayList<String> a = cliente.getUsuarios();
             vU = new VentanaUsuarios(a);
             vU.setControladorGrafico(this);
             this.setvU(vU);
