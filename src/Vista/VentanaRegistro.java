@@ -139,6 +139,5 @@ public class VentanaRegistro extends JFrame{
         cerrarRegistro();
       }else
         JOptionPane.showMessageDialog(null, "user already exists, try a different username", "", JOptionPane.ERROR_MESSAGE);
-
     }
 }

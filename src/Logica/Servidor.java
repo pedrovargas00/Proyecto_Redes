@@ -282,6 +282,7 @@ class GestorPeticion extends Thread {
                                     //salida.close();
                                     //entrada.close();
                                     //exit(1);
+
                                     //Carga usuarios
 
                                     usuariosT = servidor.obtenerUsuarios(datos[0]);
@@ -338,3 +339,18 @@ class GestorPeticion extends Thread {
         }
     }
 }
+
+
+// //Chat
+// 
+// Socket cliente;
+// metodo chat(Socket cliente2){
+//
+//   //Abrir flujos con cliente2
+//   entradaCliente1---
+//   salidaCliente1---
+//
+//   entradaCliente2---
+//   salidaCliente2---
+//
+// }

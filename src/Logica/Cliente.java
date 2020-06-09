@@ -77,8 +77,10 @@ public class Cliente{
     }
 
     public static ArrayList<String> getUsuarios(){
+
       return usuarios;
     }
+
     public String getMensajeEntrante() {
 
         return mensajeEntrante;
@@ -111,95 +113,106 @@ public class Cliente{
 
     public void cliente() throws Exception{
 
-        String servidor = "localhost";
         int puerto = 9999;
+        boolean accedio = false;
+        String servidor = "localhost";
+        String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
         String datos[] = new String[2];
-        String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         Cifrado cifrado = new Cifrado();
         Md5 md5 = new Md5();
+
         try{
             Socket socket = new Socket(servidor, puerto);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ) ,true);
             System.out.println("GetLogin: " + getLogin());
-            while(login == -1)
-                System.out.print("");
 
-            System.out.println("--GetLogin: " + getLogin());
-            switch(getLogin()){
+        while(!accedio){
+          while(login == -1)
+              System.out.print("");
 
-                case 0:
-                    System.out.println("\nRegistro");
-                    datos[0] = getUsuario();
-                    datos[1] = getContrasenia();
-                    System.out.println("--Datos: " + datos[0] + " " + datos[1]);
-                    salida.println(cifrado.cifrar("0", clave));
-                    salida.println(cifrado.cifrar(datos[0], clave));
-                    salida.println(cifrado.cifrar(datos[1], clave));
-                    while(true){
-                        entry = cifrado.descifrar(entrada.readLine(), clave);
-                        if(entry.equalsIgnoreCase("Ya existe")){
-                          controlador.registro(false);
-                          System.out.println("***EL USUARIO YA EXISTE***");
-                          break;
-                        } if(entry.equalsIgnoreCase("Agregado")){
-                          System.out.println("***USUARIO AGREGADO***");
-                          controlador.registro(true);
-                          break;
-                        }
-                    }
-                    break;
+          System.out.println("--GetLogin: " + getLogin());
 
-                case 1:
-                    System.out.println("\nLogin");
-                    datos[0] = getUsuario();
-                    datos[1] = getContrasenia();
-                    System.out.println("Datos: " + datos[0] + " " + datos[1]);
-                    salida.println(cifrado.cifrar("1", clave));
-                    salida.println(cifrado.cifrar(datos[0], clave));
-                    while(true){
-                        entry = cifrado.descifrar(entrada.readLine(), clave);
-                        if(entry.equalsIgnoreCase("1")){
-                            mensaje = entrada.readLine();
-                            mezcla = mezclar(mensaje, datos[1]);
-                            finalMd5 = md5.algoritmoMd5(mezcla);
-                            salida.println(finalMd5);
-                            if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
-                                if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
-                                    System.out.println("Acceso permitido");
+          switch(getLogin()){
 
-                                    while ((usuarioT = entrada.readLine())!= null)
-                                        if(!usuarioT.equalsIgnoreCase("-1"))
-                                          getUsuarios().add(usuarioT);
-                                        else
+              case 0:
+                  System.out.println("\nRegistro");
+                  datos[0] = getUsuario();
+                  datos[1] = getContrasenia();
+                  System.out.println("--Datos: " + datos[0] + " " + datos[1]);
+                  salida.println(cifrado.cifrar("0", clave));
+                  salida.println(cifrado.cifrar(datos[0], clave));
+                  salida.println(cifrado.cifrar(datos[1], clave));
+                  while(true){
+                      entry = cifrado.descifrar(entrada.readLine(), clave);
+                      if(entry.equalsIgnoreCase("Ya existe")){
+                        controlador.registro(false);
+                        System.out.println("***EL USUARIO YA EXISTE***");
+                        setLogin(-1);
+                        break;
+                      } if(entry.equalsIgnoreCase("Agregado")){
+                        System.out.println("***USUARIO AGREGADO***");
+                        controlador.registro(true);
+                        setLogin(-1);
+                        break;
+                      }
+                  }
+                  break;
+
+              case 1:
+                  System.out.println("\nLogin");
+                  datos[0] = getUsuario();
+                  datos[1] = getContrasenia();
+                  System.out.println("Datos: " + datos[0] + " " + datos[1]);
+                  salida.println(cifrado.cifrar("1", clave));
+                  salida.println(cifrado.cifrar(datos[0], clave));
+                  while(true){
+                      entry = cifrado.descifrar(entrada.readLine(), clave);
+                      if(entry.equalsIgnoreCase("1")){
+                          mensaje = entrada.readLine();
+                          mezcla = mezclar(mensaje, datos[1]);
+                          finalMd5 = md5.algoritmoMd5(mezcla);
+                          salida.println(finalMd5);
+                          if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
+                              if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
+                                  System.out.println("Acceso permitido");
+
+                                  while ((usuarioT = entrada.readLine())!= null)
+                                      if(!usuarioT.equalsIgnoreCase("-1"))
+                                        getUsuarios().add(usuarioT);
+                                      else
+                                        break;
+
+                                  while((contacto = entrada.readLine()) != null)
+                                      if(!contacto.equalsIgnoreCase("-1"))
+                                          getContactos().add(contacto);
+                                      else
                                           break;
-
-                                    while((contacto = entrada.readLine()) != null)
-                                        if(!contacto.equalsIgnoreCase("-1"))
-                                            getContactos().add(contacto);
-                                        else
-                                            break;
-                                    controlador.permitido(true);
-                                }else
-                                  controlador.permitido(false);
-                            }
-                        }
-                        if(entry.equalsIgnoreCase("-1")){
-                            controlador.permitido(false);
-                            break;
-                        }
-                    }
-                    break;
-                case -1:
-                //Respaldar
-                    System.out.println("Saliendo de cliente");
-                    salida.println(cifrado.cifrar("-1", clave));
-                    break;
-                default:
-                    break;
-
-            }
+                                  controlador.permitido(true);
+                                  accedio = true;
+                              }else{
+                                controlador.permitido(false);
+                                setLogin(-1);
+                              }
+                          }
+                      }
+                      if(entry.equalsIgnoreCase("-1")){//No recordamos para qué se usa
+                          controlador.permitido(false);
+                          setLogin(-1);
+                          break;
+                      }
+                  }
+                  break;
+              case -1:
+              //Respaldar
+                  System.out.println("Saliendo de cliente");
+                  salida.println(cifrado.cifrar("-1", clave));
+                  break;
+              default:
+                  break;
+          }
+        }
             socket.close();
         }
         catch(UnknownHostException e){
@@ -208,6 +221,5 @@ public class Cliente{
         catch(IOException e){
             e.printStackTrace();
         }
-
     }
 }

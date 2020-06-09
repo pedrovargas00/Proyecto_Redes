@@ -12,7 +12,6 @@ public class ControladorGrafico{
     private VentanaUsuarios vU;
     private VentanaChat vChat;
     private Cliente cliente;
-
     public ControladorGrafico(){}
 
     public VentanaLogin getvLogin() {
