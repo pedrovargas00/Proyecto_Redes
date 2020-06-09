@@ -121,16 +121,16 @@ public class Cliente{
         String datos[] = new String[2];
         Cifrado cifrado = new Cifrado();
         Md5 md5 = new Md5();
-
+        
+        
         try{
             Socket socket = new Socket(servidor, puerto);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ) ,true);
             System.out.println("GetLogin: " + getLogin());
-
-        while(!accedio){
-          while(login == -1)
-              System.out.print("");
+            while(!accedio){
+                  //while(login == -1)
+                    //  System.out.print("");
 
           System.out.println("--GetLogin: " + getLogin());
 
@@ -204,7 +204,7 @@ public class Cliente{
                       }
                   }
                   break;
-              case -1:
+              case -2:
               //Respaldar
                   System.out.println("Saliendo de cliente");
                   salida.println(cifrado.cifrar("-1", clave));
@@ -212,14 +212,14 @@ public class Cliente{
               default:
                   break;
           }
-        }
+            }
             socket.close();
-        }
-        catch(UnknownHostException e){
-            e.printStackTrace();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+            }
+            catch(UnknownHostException e){
+                e.printStackTrace();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
     }
 }

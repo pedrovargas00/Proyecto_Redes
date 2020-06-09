@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/src/Vista/VentanaUsuarios.java</file>
-            <file>file:/C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/src/Logica/Cliente.java</file>
-            <file>file:/C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/src/Controlador/ControladorGrafico.java</file>
-            <file>file:/C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/src/Logica/Servidor.java</file>
-            <file>file:/C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes-master/src/Vista/VentanaContactos.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Vista/VentanaRegistro.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Logica/Principal.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Vista/VentanaLogin.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Controlador/ControladorGrafico.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Logica/Cliente.java</file>
+            <file>file:/C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial%233/src/Logica/Servidor.java</file>
         </group>
     </open-files>
 </project-private>

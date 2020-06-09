@@ -7,7 +7,7 @@ public class ControladorGrafico{
 
     //referencia a todas las ventanas del programa
     private VentanaLogin vLogin;
-    private VentanaRegistro vRegistro;
+    private VentanaRegistro vR;
     private VentanaContactos vC;
     private VentanaUsuarios vU;
     private VentanaChat vChat;
@@ -26,12 +26,12 @@ public class ControladorGrafico{
         return cliente;
     }
 
-    public void setvRegistro(VentanaRegistro vRegistro){
-        this.vRegistro = vRegistro;
+    public void setvRegistro(VentanaRegistro vR){
+        this.vR = vR;
     }
 
-    public VentanaRegistro getvRegistro(){
-        return vRegistro;
+    public VentanaRegistro getvR(){
+        return vR;
     }
 
     public void setvLogin(VentanaLogin vLogin) {
@@ -80,7 +80,7 @@ public class ControladorGrafico{
     }
 
     public void mostrarRegistro(){
-        VentanaRegistro vR = new VentanaRegistro();
+        vR = new VentanaRegistro();
         vR.setControladorGrafico(this);
         vR.setVisible(true);
     }
@@ -147,8 +147,9 @@ public class ControladorGrafico{
     }
 
     public void registro(boolean registrado){
-      vRegistro.registroExitoso(registrado);
+        vR.registroExitoso(registrado);
     }
+    
     public boolean esContacto(String nombre){
       for(int i=0; i<cliente.getContactos().size();i++)
         if(nombre.equals(cliente.getContactos().get(i)))

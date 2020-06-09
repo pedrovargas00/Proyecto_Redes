@@ -6,4 +6,9 @@ user5, y67^2QE3
 nuevo, 12345
 -user1
 -user2
-Diana, 123
+u, 12
+u1, 12
+
+alguien, 123
+nn, 123
+jj, 12

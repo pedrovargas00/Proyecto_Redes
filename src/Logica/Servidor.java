@@ -27,7 +27,7 @@ public class Servidor{
         File archivo = new File(nombreArchivo);
         FileWriter fw = new FileWriter(archivo, true);
 
-        fw.write("\n");
+        //fw.write("\n");
         fw.write(user);
         fw.write(", ");
         fw.write(password);
@@ -39,7 +39,7 @@ public class Servidor{
 
     private void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
 
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
         String auxiliar, in[], cargaArchivo = "";
         long posicion;
 
@@ -48,7 +48,7 @@ public class Servidor{
             return;
         }
         while((auxiliar = archivo.readLine()) != null){
-            in = auxiliar.split(",");
+            in = auxiliar.split(","); 
             if(in[0].equalsIgnoreCase(usuario)){
                 //aumento lo necesario
                 posicion = archivo.getFilePointer() - 1;
@@ -73,7 +73,7 @@ public class Servidor{
         String[] in;
         String auxiliar;
         ArrayList<String> contactos = new ArrayList<String>();
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -94,12 +94,12 @@ public class Servidor{
       String[] in;
       String auxiliar;
       ArrayList<String> usuarios = new ArrayList<String>();
-      BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
+      BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
       if(bf.ready() == false)
           System.out.println("El archivo esta vacio - usuarios");
       System.out.println("Listar usuarios");
       while((auxiliar = bf.readLine()) != null){
-          if(auxiliar.charAt(0)!='-'){
+          if(!auxiliar.startsWith("-")){
             in = auxiliar.split(",");
             if(!usuario.equals(in[0]))
               usuarios.add(in[0]);
@@ -112,7 +112,7 @@ public class Servidor{
         long posicion;
         String[] in;
         String auxiliar, cargaArchivo = "";
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
 
         while((auxiliar = archivo.readLine()) != null){
             in = auxiliar.split(",");
@@ -139,7 +139,7 @@ public class Servidor{
 
         String[] in;
         String auxiliar;
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -195,7 +195,7 @@ public class Servidor{
 
     public static void main(String[] args) throws IOException {
 
-        servidor("C:/Users/linda/OneDrive/Escuela/Modelo de redes/proyecto/Proyecto_Redes/" + args[0]);
+        servidor("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/" + args[0]);
 
     }
 }
@@ -321,7 +321,7 @@ class GestorPeticion extends Thread {
                             }
                         }
                         break;
-                    case -1:
+                    case -2:
                         System.out.println("Saliendo de servidor");
                         ex = -1;
                         exit(1);
