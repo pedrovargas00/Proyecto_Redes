@@ -9,7 +9,14 @@ import java.util.Random;
 
 public class Servidor{
 
-    public Servidor(){}
+    private static ArrayList<Socket> clientes;
+    private String ruta;
+
+    public Servidor(){
+
+      this.clientes = new ArrayList();
+      this.ruta = "C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt";
+    }
 
     public String mezclar(String messageStr, String password){
 
@@ -39,7 +46,7 @@ public class Servidor{
 
     private void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
 
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile(ruta, "rw");
         String auxiliar, in[], cargaArchivo = "";
         long posicion;
 
@@ -48,7 +55,7 @@ public class Servidor{
             return;
         }
         while((auxiliar = archivo.readLine()) != null){
-            in = auxiliar.split(","); 
+            in = auxiliar.split(",");
             if(in[0].equalsIgnoreCase(usuario)){
                 //aumento lo necesario
                 posicion = archivo.getFilePointer() - 1;
@@ -73,7 +80,7 @@ public class Servidor{
         String[] in;
         String auxiliar;
         ArrayList<String> contactos = new ArrayList<String>();
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader(ruta));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -94,7 +101,7 @@ public class Servidor{
       String[] in;
       String auxiliar;
       ArrayList<String> usuarios = new ArrayList<String>();
-      BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
+      BufferedReader bf = new BufferedReader(new FileReader(ruta));
       if(bf.ready() == false)
           System.out.println("El archivo esta vacio - usuarios");
       System.out.println("Listar usuarios");
@@ -112,7 +119,7 @@ public class Servidor{
         long posicion;
         String[] in;
         String auxiliar, cargaArchivo = "";
-        RandomAccessFile archivo = new RandomAccessFile("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt", "rw");
+        RandomAccessFile archivo = new RandomAccessFile(ruta, "rw");
 
         while((auxiliar = archivo.readLine()) != null){
             in = auxiliar.split(",");
@@ -139,7 +146,7 @@ public class Servidor{
 
         String[] in;
         String auxiliar;
-        BufferedReader bf = new BufferedReader(new FileReader("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt"));
+        BufferedReader bf = new BufferedReader(new FileReader(ruta));
 
         if(bf.ready() == false)
             System.out.println("El archivo esta vacio");
@@ -166,6 +173,17 @@ public class Servidor{
         return mensajeAleatorio;
     }
 
+    public Socket buscarPuerto(HashMap<String, Integer> usuarios, String contactoChat){
+
+      int puerto = usuarios.get(contactoChat);
+
+      for(int i = 0; i < clientes.size(); i++)
+        if(clientes.get(i).getPort() == puerto)
+          return clientes.get(i);
+      
+      return null;
+    }
+
     private static void servidor(String nombreArchivo) throws IOException{
 
         ServerSocket ss = null;
@@ -184,8 +202,8 @@ public class Servidor{
 
         while(true){
             s = ss.accept();
-            /*if(!clientes.contains(s))
-                clientes.add(s);*/
+            if(!clientes.contains(s))
+                clientes.add(s);
             System.out.println("Nueva conexion aceptada: " + s);
             new GestorPeticion(s, nombreArchivo).start();
             s = null;
@@ -218,13 +236,12 @@ class GestorPeticion extends Thread {
         this.md5 = new Md5();
     }
 
-
     public void run(){
         /*El diccionario de usuarios está aquí*/
         BufferedReader entrada;
         PrintWriter salida;
         Cifrado cifrado = new Cifrado();
-        Map<String, Integer> usuarios = new HashMap();
+        HashMap<String, Integer> usuarios = new HashMap();
         int opcion, ex = 0;
         String datos[] = new String[2], mensajeCombinado, aleatorio, finalMd5, clienteMd5;
         String contraUsuario;
@@ -342,7 +359,7 @@ class GestorPeticion extends Thread {
 
 
 // //Chat
-// 
+//
 // Socket cliente;
 // metodo chat(Socket cliente2){
 //

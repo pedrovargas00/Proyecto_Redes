@@ -10,14 +10,17 @@ import javax.swing.JFrame;
 
 public class Cliente{
 
-    private static String usuario;
-    private static String contrasenia;
-    private static int login;
-    private static ArrayList<String> contactos;
+    private String usuario;
+    private String contrasenia;
+    private int login;
+    private ArrayList<String> contactos;
     private String mensajeEntrante;
     private String mensajeSaliente;
     private ControladorGrafico controlador;
-    private static ArrayList<String> usuarios;
+    private ArrayList<String> usuarios;
+    private Cifrado cifrado;
+    private Md5 md5;
+
     public Cliente(){
 
         this.contactos = new ArrayList();
@@ -27,6 +30,8 @@ public class Cliente{
         this.login = -1;
         this.mensajeEntrante = "";
         this.mensajeSaliente = "";
+        this.cifrado = new Cifrado();
+        this.md5 = new Md5();
     }
 
     public void setControlador(ControladorGrafico controlador){
@@ -34,7 +39,7 @@ public class Cliente{
         this.controlador = controlador;
     }
 
-    public static String getUsuario() {
+    public String getUsuario() {
 
         return usuario;
     }
@@ -45,7 +50,7 @@ public class Cliente{
         System.out.println("Usuario_" + usuario);
     }
 
-    public static String getContrasenia() {
+    public String getContrasenia() {
 
         return contrasenia;
     }
@@ -56,7 +61,7 @@ public class Cliente{
         System.out.println("Con: " + contrasenia);
     }
 
-    public static int getLogin() {
+    public int getLogin() {
 
         return login;
     }
@@ -76,7 +81,7 @@ public class Cliente{
         this.contactos = contactos;
     }
 
-    public static ArrayList<String> getUsuarios(){
+    public ArrayList<String> getUsuarios(){
 
       return usuarios;
     }
@@ -111,7 +116,133 @@ public class Cliente{
         return message.toString();
     }
 
-    public void cliente() throws Exception{
+    public void menu() throws Exception {
+
+      while(getLogin() != -2){
+            //System.out.print("MENU\n1.- Registro\n2.- Login\n0.- Salir.\n--> ");
+            //opcion = in.nextInt();
+            switch(getLogin()){
+                case 0:
+                    registro();
+                    break;
+                case 1:
+                    login();
+                    break;
+                case 2:
+                    System.out.println("Chat");
+                    //cliente(-1);
+                    //opcion = -1;
+                    break;
+                default:
+                    //System.out.println("Opcion inválida");
+                    System.out.println("");
+            }
+        }
+    }
+
+    public void registro() throws Exception {
+
+      String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+      String entry;
+      String datos[] = new String[2];
+
+      try{
+          Socket socket = new Socket("localhost", 9999);
+          BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+
+          System.out.println("\nRegistro");
+          datos[0] = getUsuario();
+          datos[1] = getContrasenia();
+          System.out.println("--Datos: " + datos[0] + " " + datos[1]);
+          salida.println(cifrado.cifrar("0", clave));
+          salida.println(cifrado.cifrar(datos[0], clave));
+          salida.println(cifrado.cifrar(datos[1], clave));
+          while(true){
+              entry = cifrado.descifrar(entrada.readLine(), clave);
+              if(entry.equalsIgnoreCase("Ya existe")){
+                controlador.registro(false);
+                System.out.println("***EL USUARIO YA EXISTE***");
+                setLogin(-1);
+                break;
+              } if(entry.equalsIgnoreCase("Agregado")){
+                System.out.println("***USUARIO AGREGADO***");
+                controlador.registro(true);
+                setLogin(-1);
+                break;
+              }
+          }
+          socket.close();
+      }catch(UnknownHostException e){
+            e.printStackTrace();
+      }catch(IOException e){
+            e.printStackTrace();
+      }
+    }
+
+    public void login() throws Exception {
+
+      boolean accedio = false;
+      String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+      String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
+      String datos[] = new String[2];
+
+      try{
+          Socket socket = new Socket("localhost", 9999);
+          BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+
+          System.out.println("\nLogin");
+          datos[0] = getUsuario();
+          datos[1] = getContrasenia();
+          System.out.println("Datos: " + datos[0] + " " + datos[1]);
+          salida.println(cifrado.cifrar("1", clave));
+          salida.println(cifrado.cifrar(datos[0], clave));
+          while(true){
+              entry = cifrado.descifrar(entrada.readLine(), clave);
+              if(entry.equalsIgnoreCase("1")){
+                  mensaje = entrada.readLine();
+                  mezcla = mezclar(mensaje, datos[1]);
+                  finalMd5 = md5.algoritmoMd5(mezcla);
+                  salida.println(finalMd5);
+                  if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("9")){
+                      if(cifrado.descifrar(entrada.readLine(), clave).equalsIgnoreCase("\n****TIENE ACCESO****")){
+                          System.out.println("Acceso permitido");
+                          while ((usuarioT = entrada.readLine())!= null)
+                              if(!usuarioT.equalsIgnoreCase("-1"))
+                                getUsuarios().add(usuarioT);
+                              else
+                                break;
+                          while((contacto = entrada.readLine()) != null)
+                              if(!contacto.equalsIgnoreCase("-1"))
+                                  getContactos().add(contacto);
+                              else
+                                  break;
+                          controlador.permitido(true);
+                          accedio = true;
+                      }else{
+                        controlador.permitido(false);
+                        setLogin(-1);
+                      }
+                  }
+              }if(entry.equalsIgnoreCase("-1")){//No recordamos para qué se usa
+                controlador.permitido(false);
+                setLogin(-1);
+                break;
+              }
+          }
+
+          socket.close();
+      } catch(UnknownHostException e){
+          e.printStackTrace();
+      } catch(IOException e){
+          e.printStackTrace();
+      }
+    }
+
+    public void chat(){}
+
+    /*public void cliente() throws Exception{
 
         int puerto = 9999;
         boolean accedio = false;
@@ -119,16 +250,13 @@ public class Cliente{
         String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
         String datos[] = new String[2];
-        Cifrado cifrado = new Cifrado();
-        Md5 md5 = new Md5();
-        
-        
+
+
         try{
             Socket socket = new Socket(servidor, puerto);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ) ,true);
+            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
             System.out.println("GetLogin: " + getLogin());
-            while(!accedio){
                   //while(login == -1)
                     //  System.out.print("");
 
@@ -212,7 +340,6 @@ public class Cliente{
               default:
                   break;
           }
-            }
             socket.close();
             }
             catch(UnknownHostException e){
@@ -221,5 +348,5 @@ public class Cliente{
             catch(IOException e){
                 e.printStackTrace();
             }
-    }
+    }*/
 }
