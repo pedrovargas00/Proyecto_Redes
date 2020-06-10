@@ -1,12 +1,8 @@
 package Logica;
 import Controlador.ControladorGrafico;
-import Vista.VentanaLogin;
-import java.util.Scanner;
 import java.net.*;
 import java.io.*;
-import static java.lang.System.exit;
 import java.util.ArrayList;
-import javax.swing.JFrame;
 
 public class Cliente{
 
@@ -14,6 +10,7 @@ public class Cliente{
     private String contrasenia;
     private int login;
     private ArrayList<String> contactos;
+    private String contacto;
     private String mensajeEntrante;
     private String mensajeSaliente;
     private ControladorGrafico controlador;
@@ -27,6 +24,7 @@ public class Cliente{
         this.usuarios = new ArrayList();
         this.usuario = "";
         this.contrasenia = "";
+        this.contacto = "";
         this.login = -1;
         this.mensajeEntrante = "";
         this.mensajeSaliente = "";
@@ -54,7 +52,12 @@ public class Cliente{
 
         return contrasenia;
     }
-
+    
+    public void setContacto(String contacto){
+        
+        this.contacto = contacto;
+    }
+    
     public void setContrasenia(String contrasenia) {
 
         this.contrasenia = contrasenia;
@@ -130,8 +133,10 @@ public class Cliente{
                     break;
                 case 2:
                     System.out.println("Chat");
-                    //cliente(-1);
-                    //opcion = -1;
+                    chat();
+                    break;
+                case 3:
+                    recibirChat();
                     break;
                 default:
                     //System.out.println("Opcion inválida");
@@ -182,7 +187,6 @@ public class Cliente{
 
     public void login() throws Exception {
 
-      boolean accedio = false;
       String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
       String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
       String datos[] = new String[2];
@@ -219,7 +223,6 @@ public class Cliente{
                               else
                                   break;
                           controlador.permitido(true);
-                          accedio = true;
                       }else{
                         controlador.permitido(false);
                         setLogin(-1);
@@ -240,8 +243,64 @@ public class Cliente{
       }
     }
 
-    public void chat(){}
+    public void chat() throws Exception{
+      
+        try{
+            Socket socket = new Socket("localhost", 9999);
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+            String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+            String mensaje = " ";
+            
+            salida.println(cifrado.cifrar("2", clave));
+            salida.println(cifrado.cifrar(contacto, clave));
+            while(true){
+                if(!mensajeSaliente.isEmpty()){
+                    salida.println(mensajeSaliente);
+                    setMensajeSaliente("");
+                    break;
+                }
+                if(!(mensaje = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
+                    System.out.println("mensaje Recibido: " + mensaje);
+                    break;
+                } 
+            }
+            socket.close();
+        }catch(UnknownHostException e){
+              e.printStackTrace();
+        }catch(IOException e){
+              e.printStackTrace();
+        }
+    }
 
+    public void recibirChat()throws Exception{
+        
+        try{
+            Socket socket = new Socket("localhost", 9999);
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+            String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+            String mensaje = " ";
+        
+            controlador.mostrarChat(cifrado.descifrar(entrada.readLine(), clave));
+            while(true){
+                if(!mensajeSaliente.isEmpty()){
+                    salida.println(mensajeSaliente);
+                    setMensajeSaliente("");
+                    break;
+                }
+                if(!(mensaje = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
+                    System.out.println("mensaje Recibido: " + mensaje);
+                    break;
+                } 
+            }
+            socket.close();
+        }catch(UnknownHostException e){
+              e.printStackTrace();
+        }catch(IOException e){
+              e.printStackTrace();
+        }
+    }
     /*public void cliente() throws Exception{
 
         int puerto = 9999;

@@ -94,6 +94,7 @@ public class ControladorGrafico{
                 this.setvChat(vChat);
                 vChat.setControladorGrafico(this);
                 vChat.setVisible(true);
+                cliente.setContacto(nombreContacto);
             }
         }else{
             VentanaChat vChat = new VentanaChat(nombreContacto);
@@ -102,11 +103,14 @@ public class ControladorGrafico{
             vChat.setVisible(true);
         }
     }
+    
     public void actualizarContactos(){
+      vU.cerrarUsuarios();
       vC = new VentanaContactos(cliente.getContactos());
       vC.setControladorGrafico(this);
       this.setvC(vC);
     }
+    
     public void mostrarUsuarios(){
         if(this.getvU() != null)
             this.getvU().mostrarUsuarios();
@@ -156,12 +160,22 @@ public class ControladorGrafico{
           return true;
       return false;
     }
+    
     public void eliminarContacto(String nombre){
       for(int i=0; i<cliente.getContactos().size();i++)
         if(nombre.equals(cliente.getContactos().get(i)))
           cliente.getContactos().remove(i);
     }
+    
     public void agregarContacto(String nuevoContacto){
       getCliente().getContactos().add(nuevoContacto);
+    }
+    
+    public void enviarMensaje(String mensaje){
+        cliente.setMensajeSaliente(mensaje);
+    }
+    
+    public void recibirMensaje(String mensaje){
+        vChat.setMensaje(mensaje);
     }
 }

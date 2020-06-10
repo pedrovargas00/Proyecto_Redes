@@ -10,12 +10,15 @@ import java.util.Random;
 public class Servidor{
 
     private static ArrayList<Socket> clientes;
-    private String ruta;
+    private static String ruta;
 
     public Servidor(){
+    }
 
-      this.clientes = new ArrayList();
-      this.ruta = "C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt";
+    private static void inicializar(){
+
+      clientes = new ArrayList();
+      ruta = "C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt";
     }
 
     public String mezclar(String messageStr, String password){
@@ -87,10 +90,9 @@ public class Servidor{
         while((auxiliar = bf.readLine()) != null){
             in = auxiliar.split(",");
             if(in[0].equalsIgnoreCase(usuario)){
-                while((auxiliar = bf.readLine()) != null){
+                while((auxiliar = bf.readLine()) != null && auxiliar.startsWith("-")){
                     System.out.println("aux: " + auxiliar);
-                    if(auxiliar.startsWith("-"))
-                        contactos.add(auxiliar.substring(1).trim());
+                    contactos.add(auxiliar.substring(1).trim());
                 }
                 return contactos;
             }
@@ -98,6 +100,7 @@ public class Servidor{
         return null;
     }
     public ArrayList<String> obtenerUsuarios(String usuario)throws FileNotFoundException, IOException{
+      
       String[] in;
       String auxiliar;
       ArrayList<String> usuarios = new ArrayList<String>();
@@ -180,7 +183,7 @@ public class Servidor{
       for(int i = 0; i < clientes.size(); i++)
         if(clientes.get(i).getPort() == puerto)
           return clientes.get(i);
-      
+
       return null;
     }
 
@@ -190,6 +193,7 @@ public class Servidor{
         Socket s = null;
         //ArrayList<Socket> clientes = new ArrayList();
 
+        inicializar();
         try {
             ss = new ServerSocket(9999);
         }
@@ -248,14 +252,21 @@ class GestorPeticion extends Thread {
         ArrayList<String> contactos;
         ArrayList<String> usuariosT = new ArrayList<String>();
         String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
-
+        //--------------------
+        String nombreContacto, nombreEntrante, entraContacto;
+        Socket socketContacto;
+        BufferedReader entradaContacto;
+        PrintWriter salidaContacto;
+        
         try{
             entrada = new BufferedReader(new InputStreamReader(s.getInputStream()));
             salida = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())), true);
-
+            
+            //entrada InputStream
+            //salida OutputStream
             while(ex != -1){
                 opcion = Integer.parseInt(cifrado.descifrar(entrada.readLine(), clave));
-                System.out.println("Opcion: " + opcion);
+                //System.out.println("Opcion: " + opcion);
                 switch(opcion){
                     case 0:
                         System.out.println("Registro");
@@ -320,6 +331,7 @@ class GestorPeticion extends Thread {
                                         for(int i = 0; i < contactos.size(); i++)
                                             salida.println(contactos.get(i));
                                     }
+                                    contactos.clear();
                                     salida.println("-1");
                                     //Continúa para chat
                                 } else{
@@ -327,9 +339,10 @@ class GestorPeticion extends Thread {
                                     salida.println(cifrado.cifrar("9", clave));
                                     salida.println(cifrado.cifrar("\n****NO TIENE ACCESO****", clave));
                                     System.out.println("Acceso denegado");
-                                    salida.close();
-                                    entrada.close();
-                                    exit(1);
+                                    
+                                    //salida.close();
+                                    //entrada.close();
+                                    //exit(1);
                                 }
                                 //Continúa para Chat
                             } else{
@@ -338,7 +351,36 @@ class GestorPeticion extends Thread {
                             }
                         }
                         break;
+                        
+                    case 2:
+                        System.out.println("Chat");
+                        nombreContacto = cifrado.descifrar(entrada.readLine(), clave);
+                        socketContacto = servidor.buscarPuerto(usuarios, nombreContacto);
+                        entradaContacto = new BufferedReader(new InputStreamReader(socketContacto.getInputStream()));
+                        salidaContacto = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketContacto.getOutputStream())),true);
+
+                        while(true){
+                            if(!(entraContacto = cifrado.descifrar(entradaContacto.readLine(), clave)).isEmpty()){
+                                salida.println(cifrado.cifrar(entraContacto, clave));
+                                //if();
+                                break;
+                            }
+                            if(!(entraContacto = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
+                                salidaContacto.println(cifrado.cifrar(entraContacto, clave));
+                                break;
+                            }
+                        }
+                       break;
                     case -2:
+                        
+                        /*
+                         Entra a ciclo
+                        C1 envíe el nombre del contacto
+                        Obtiene el socket
+                        entrada = new BufferedReader(new InputStreamReader(sC2.getInputStream()));
+                        salida = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sC2.getOutputStream())), true);
+                        
+                         */
                         System.out.println("Saliendo de servidor");
                         ex = -1;
                         exit(1);

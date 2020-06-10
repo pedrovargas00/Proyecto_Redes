@@ -119,7 +119,7 @@ public final class VentanaChat extends JFrame{
                     jtEmisor.append(aux);
                     saltos++;
                 }
-                setMensaje("Respuesta");
+                controladorGrafico.enviarMensaje(mensaje);
                 //Aquí se envía el mensaje al servidor para que lo ponga en el jtext del contacto
             }
         });

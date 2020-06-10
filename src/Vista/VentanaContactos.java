@@ -123,6 +123,7 @@ public class VentanaContactos extends JFrame{
       }else{
         for(int i = 0; i < bConversar.size(); i++){
           if (boton.equals(bConversar.get(i))){
+           controladorGrafico.indicadorLogin(2);
            controladorGrafico.mostrarChat(lContactos.get(i).getText());
            cerrarContactos(1);
           }
