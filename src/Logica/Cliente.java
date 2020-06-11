@@ -1,10 +1,16 @@
 package Logica;
 import Controlador.ControladorGrafico;
 import java.net.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.io.*;
 import java.util.ArrayList;
 
-public class Cliente{
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+public class Cliente {
 
     private String usuario;
     private String contrasenia;
@@ -18,7 +24,7 @@ public class Cliente{
     private Cifrado cifrado;
     private Md5 md5;
 
-    public Cliente(){
+    public Cliente() {
 
         this.contactos = new ArrayList();
         this.usuarios = new ArrayList();
@@ -32,7 +38,7 @@ public class Cliente{
         this.md5 = new Md5();
     }
 
-    public void setControlador(ControladorGrafico controlador){
+    public void setControlador(ControladorGrafico controlador) {
 
         this.controlador = controlador;
     }
@@ -52,12 +58,12 @@ public class Cliente{
 
         return contrasenia;
     }
-    
-    public void setContacto(String contacto){
-        
+
+    public void setContacto(String contacto) {
+
         this.contacto = contacto;
     }
-    
+
     public void setContrasenia(String contrasenia) {
 
         this.contrasenia = contrasenia;
@@ -84,9 +90,9 @@ public class Cliente{
         this.contactos = contactos;
     }
 
-    public ArrayList<String> getUsuarios(){
+    public ArrayList<String> getUsuarios() {
 
-      return usuarios;
+        return usuarios;
     }
 
     public String getMensajeEntrante() {
@@ -109,10 +115,10 @@ public class Cliente{
         this.mensajeSaliente = mensajeSaliente;
     }
 
-    private static String mezclar(String messageStr, String password){
+    private static String mezclar(String messageStr, String password) {
 
-        StringBuilder message =  new StringBuilder(messageStr);
-        for(int i = 0; i < password.length(); i++)
+        StringBuilder message = new StringBuilder(messageStr);
+        for (int i = 0; i < password.length(); i++)
             message.insert((i * 42) + password.charAt(i), password.charAt(i));
 
         message.insert(0, password.length());
@@ -121,10 +127,10 @@ public class Cliente{
 
     public void menu() throws Exception {
 
-      while(getLogin() != -2){
-            //System.out.print("MENU\n1.- Registro\n2.- Login\n0.- Salir.\n--> ");
-            //opcion = in.nextInt();
-            switch(getLogin()){
+        while (getLogin() != -2) {
+            // System.out.print("MENU\n1.- Registro\n2.- Login\n0.- Salir.\n--> ");
+            // opcion = in.nextInt();
+            switch (getLogin()) {
                 case 0:
                     registro();
                     break;
@@ -138,13 +144,52 @@ public class Cliente{
                 case 3:
                     recibirChat();
                     break;
+                case 5:
+                    // System.out.println("Esperando si se recibe un chat");
+                    esperandoRecibir();
+                    break;
                 default:
-                    //System.out.println("Opcion inválida");
+                    // System.out.println("Opcion inválida");
                     System.out.println("");
+                    break;
             }
         }
     }
 
+    public void esperandoRecibir() throws UnknownHostException, IOException {
+        String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+        try {
+            Socket socket = new Socket("localhost", 9999);
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter salida = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+            if (entrada != null)
+                if (cifrado.descifrar(entrada.readLine(), clave).equals("chat")){
+                    System.out.println("Recibi un chat");
+                    setLogin(3);
+                }
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+  
+    }
     public void registro() throws Exception {
 
       String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
@@ -202,7 +247,6 @@ public class Cliente{
           System.out.println("Datos: " + datos[0] + " " + datos[1]);
           salida.println(cifrado.cifrar("1", clave));
           salida.println(cifrado.cifrar(datos[0], clave));
-          while(true){
               entry = cifrado.descifrar(entrada.readLine(), clave);
               if(entry.equalsIgnoreCase("1")){
                   mensaje = entrada.readLine();
@@ -223,6 +267,7 @@ public class Cliente{
                               else
                                   break;
                           controlador.permitido(true);
+                          setLogin(5);
                       }else{
                         controlador.permitido(false);
                         setLogin(-1);
@@ -231,9 +276,8 @@ public class Cliente{
               }if(entry.equalsIgnoreCase("-1")){//No recordamos para qué se usa
                 controlador.permitido(false);
                 setLogin(-1);
-                break;
+                
               }
-          }
 
           socket.close();
       } catch(UnknownHostException e){
@@ -257,13 +301,16 @@ public class Cliente{
             while(true){
                 if(!mensajeSaliente.isEmpty()){
                     salida.println(mensajeSaliente);
+                    setMensajeSaliente(mensajeSaliente);
                     setMensajeSaliente("");
-                    break;
                 }
                 if(!(mensaje = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
                     System.out.println("mensaje Recibido: " + mensaje);
+                    setMensajeEntrante(mensaje);
+                    setMensajeEntrante("");
+                }
+                if(mensajeSaliente == "x"||mensaje == "x") 
                     break;
-                } 
             }
             socket.close();
         }catch(UnknownHostException e){
@@ -282,17 +329,20 @@ public class Cliente{
             String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
             String mensaje = " ";
         
-            controlador.mostrarChat(cifrado.descifrar(entrada.readLine(), clave));
+            controlador.mostrarChat(cifrado.descifrar(S.readLine(), clave));
             while(true){
                 if(!mensajeSaliente.isEmpty()){
                     salida.println(mensajeSaliente);
+                    setMensajeSaliente(mensajeSaliente);
                     setMensajeSaliente("");
-                    break;
                 }
                 if(!(mensaje = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
                     System.out.println("mensaje Recibido: " + mensaje);
+                    setMensajeEntrante(mensaje);
+                    setMensajeEntrante("");
+                }
+                if(mensajeSaliente == "x"||mensaje == "x") 
                     break;
-                } 
             }
             socket.close();
         }catch(UnknownHostException e){

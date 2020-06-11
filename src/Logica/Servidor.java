@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class Servidor{
 
-    private static ArrayList<Socket> clientes;
+    private static ArrayList<GestorPeticion> clientes;
     private static String ruta;
 
     public Servidor(){
@@ -18,7 +18,7 @@ public class Servidor{
     private static void inicializar(){
 
       clientes = new ArrayList();
-      ruta = "C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/bd.txt";
+      ruta = "C:/Users/linda/OneDrive/Escuela/Modelo de Redes/proyecto/Proyecto_Redes/bd.txt";
     }
 
     public String mezclar(String messageStr, String password){
@@ -99,6 +99,7 @@ public class Servidor{
         }
         return null;
     }
+    
     public ArrayList<String> obtenerUsuarios(String usuario)throws FileNotFoundException, IOException{
       
       String[] in;
@@ -117,6 +118,7 @@ public class Servidor{
       }
       return usuarios;
     }
+
     public void eliminarContactos(String usuario, String contacto/*, ArrayList<String> contactos*/) throws FileNotFoundException, IOException{
 
         long posicion;
@@ -176,18 +178,14 @@ public class Servidor{
         return mensajeAleatorio;
     }
 
-    public Socket buscarPuerto(HashMap<String, Integer> usuarios, String contactoChat){
-
-      int puerto = usuarios.get(contactoChat);
-
-      for(int i = 0; i < clientes.size(); i++)
-        if(clientes.get(i).getPort() == puerto)
-          return clientes.get(i);
-
-      return null;
+    public GestorPeticion buscarCliente(String contactoChat){
+        for(int i=0;i < clientes.size(); i++){
+            if(clientes.get(i).getNombre().equals(contactoChat))
+                return clientes.get(i);
+        }
+        return null;
     }
-
-    private static void servidor(String nombreArchivo) throws IOException{
+      private static void servidor(String nombreArchivo) throws IOException{
 
         ServerSocket ss = null;
         Socket s = null;
@@ -206,10 +204,12 @@ public class Servidor{
 
         while(true){
             s = ss.accept();
-            if(!clientes.contains(s))
-                clientes.add(s);
+            GestorPeticion gets = new GestorPeticion(s, nombreArchivo);
+            if(!clientes.contains(gets));
+                clientes.add(gets);
+
             System.out.println("Nueva conexion aceptada: " + s);
-            new GestorPeticion(s, nombreArchivo).start();
+            gets.start();
             s = null;
         }
 
@@ -217,7 +217,7 @@ public class Servidor{
 
     public static void main(String[] args) throws IOException {
 
-        servidor("C:/Users/Pedro-PC/Documents/NetBeansProjects/Parcial#3/" + args[0]);
+        servidor("C:/Users/linda/OneDrive/Escuela/Modelo de Redes/proyecto/Proyecto_Redes/" + args[0]);
 
     }
 }
@@ -230,7 +230,9 @@ class GestorPeticion extends Thread {
     private String nombreArchivo;
     private Servidor servidor;
     private int opcion;
-
+    private BufferedReader entrada;
+    private PrintWriter salida;
+    private String nombreUsuario;
     public GestorPeticion(Socket s, String nombreArchivo){
 
         this.s = s;
@@ -239,13 +241,19 @@ class GestorPeticion extends Thread {
         this.opcion = 0;
         this.md5 = new Md5();
     }
-
+    public BufferedReader getBufferEntrada(){
+        return entrada;
+    }
+    public PrintWriter getBufferSalida(){
+        return salida;
+    }
+    public String getNombre(){
+        return nombreUsuario;
+    }
     public void run(){
         /*El diccionario de usuarios está aquí*/
-        BufferedReader entrada;
-        PrintWriter salida;
+        
         Cifrado cifrado = new Cifrado();
-        HashMap<String, Integer> usuarios = new HashMap();
         int opcion, ex = 0;
         String datos[] = new String[2], mensajeCombinado, aleatorio, finalMd5, clienteMd5;
         String contraUsuario;
@@ -270,31 +278,29 @@ class GestorPeticion extends Thread {
                 switch(opcion){
                     case 0:
                         System.out.println("Registro");
-                        while(true){
                             datos[0] = cifrado.descifrar(entrada.readLine(), clave);
                             datos[1] = cifrado.descifrar(entrada.readLine(), clave);
                             if(servidor.verificarUsuario(datos[0]) == null){
                                 servidor.darAlta(datos[0], datos[1], nombreArchivo);
                                 salida.println(cifrado.cifrar("Agregado", clave));
                                 System.out.println("Dado de alta");
-                                break;
+                                
                             } else{
                                 salida.println(cifrado.cifrar("Ya existe", clave));
                                 System.out.println("Usuario existente");
-                                break;
+                                
                             }
-                        }
+                        
                     break;
                     case 1:
                         System.out.println("Login");
-                        while(true){
                             //Recibe nombre de usuario
                             datos[0] = cifrado.descifrar(entrada.readLine(), clave);
                             System.out.println("Datos recibidos: " + datos[0]);
                             contraUsuario = servidor.verificarUsuario(datos[0]);
                             System.out.println("Datos: " + datos[0] + " " + datos[1]);
                             if(contraUsuario != null){
-                                usuarios.put(datos[0], s.getPort());
+                                nombreUsuario = datos[0];
                                 contraUsuario = contraUsuario.substring(1, contraUsuario.length());
                                 aleatorio = servidor.mensajeAleatorio();
                                 mensajeCombinado = servidor.mezclar(aleatorio, contraUsuario);
@@ -349,25 +355,33 @@ class GestorPeticion extends Thread {
                                 salida.println(cifrado.cifrar("-1", clave));
                                 break;
                             }
-                        }
                         break;
                         
                     case 2:
                         System.out.println("Chat");
+                        //Iniciar el chat
+                        //Enviar la señal al cliente
                         nombreContacto = cifrado.descifrar(entrada.readLine(), clave);
-                        socketContacto = servidor.buscarPuerto(usuarios, nombreContacto);
-                        entradaContacto = new BufferedReader(new InputStreamReader(socketContacto.getInputStream()));
-                        salidaContacto = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketContacto.getOutputStream())),true);
+                        GestorPeticion petDestino = servidor.buscarCliente(nombreContacto);
+                        entradaContacto = petDestino.getBufferEntrada();
+                        salidaContacto = petDestino.getBufferSalida();
+                        salidaContacto.println(cifrado.cifrar("chat", clave));
+                        salidaContacto.println(cifrado.cifrar(nombreContacto, clave));
+                        System.out.println("Iniciare un chat entre"+ nombreContacto+ "  "+nombreUsuario);
+                        // // socketContacto = servidor.buscarPuerto(usuarios, nombreContacto);
+                        // entradaContacto = new BufferedReader(new InputStreamReader(socketContacto.getInputStream()));
+                        // salidaContacto = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketContacto.getOutputStream())),true);
 
                         while(true){
                             if(!(entraContacto = cifrado.descifrar(entradaContacto.readLine(), clave)).isEmpty()){
                                 salida.println(cifrado.cifrar(entraContacto, clave));
-                                //if();
-                                break;
+                                if(entraContacto.equals("x"))
+                                    break;
                             }
                             if(!(entraContacto = cifrado.descifrar(entrada.readLine(), clave)).isEmpty()){
                                 salidaContacto.println(cifrado.cifrar(entraContacto, clave));
-                                break;
+                                if(entraContacto.equals("x"))
+                                    break;
                             }
                         }
                        break;

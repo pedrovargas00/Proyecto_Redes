@@ -64,7 +64,6 @@ public class ControladorGrafico{
 
     public void permitido(boolean tieneAcceso){
         this.getvLogin().mostrarContactos(tieneAcceso);
-
     }
 
     public void mostrarContactos(){

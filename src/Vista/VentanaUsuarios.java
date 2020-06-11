@@ -114,6 +114,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
            this.setVisible(false);
     }
     public void mostrarUsuarios(){
+            controladorGrafico.indicadorLogin(5);
           this.setVisible(true);
     }
 }

@@ -28,6 +28,7 @@ public class VentanaContactos extends JFrame{
         this.setVisible(true);
 
         initComponentes(nombresContactos);
+        
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent eve) {
                 controladorGrafico.mostrarLogin();
@@ -140,5 +141,6 @@ public class VentanaContactos extends JFrame{
 
     public void mostrarContactos(){
           this.setVisible(true);
+          controladorGrafico.indicadorLogin(5);
     }
 }
