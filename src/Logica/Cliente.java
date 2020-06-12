@@ -20,9 +20,12 @@ public class Cliente {
     private String mensajeEntrante;
     private String mensajeSaliente;
     private ControladorGrafico controlador;
-    private ArrayList<String> usuarios;
-    private Cifrado cifrado;
-    private Md5 md5;
+    private final ArrayList<String> usuarios;
+    private final Cifrado cifrado;
+    private final Md5 md5;
+    private Socket socket;
+    private BufferedReader entrada;
+    private PrintWriter salida;
 
     public Cliente() {
 
@@ -38,7 +41,7 @@ public class Cliente {
         this.md5 = new Md5();
     }
 
-    public void setControlador(ControladorGrafico controlador) {
+    public void setControlador(final ControladorGrafico controlador) {
 
         this.controlador = controlador;
     }
@@ -48,7 +51,7 @@ public class Cliente {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
+    public void setUsuario(final String usuario) {
 
         this.usuario = usuario;
         System.out.println("Usuario_" + usuario);
@@ -59,12 +62,12 @@ public class Cliente {
         return contrasenia;
     }
 
-    public void setContacto(String contacto) {
+    public void setContacto(final String contacto) {
 
         this.contacto = contacto;
     }
 
-    public void setContrasenia(String contrasenia) {
+    public void setContrasenia(final String contrasenia) {
 
         this.contrasenia = contrasenia;
         System.out.println("Con: " + contrasenia);
@@ -75,7 +78,7 @@ public class Cliente {
         return login;
     }
 
-    public void setLogin(int login) {
+    public void setLogin(final int login) {
 
         this.login = login;
     }
@@ -85,7 +88,7 @@ public class Cliente {
         return contactos;
     }
 
-    public void setContactos(ArrayList<String> contactos) {
+    public void setContactos(final ArrayList<String> contactos) {
 
         this.contactos = contactos;
     }
@@ -100,7 +103,7 @@ public class Cliente {
         return mensajeEntrante;
     }
 
-    public void setMensajeEntrante(String mensajeEntrante) {
+    public void setMensajeEntrante(final String mensajeEntrante) {
 
         this.mensajeEntrante = mensajeEntrante;
     }
@@ -110,14 +113,14 @@ public class Cliente {
         return mensajeSaliente;
     }
 
-    public void setMensajeSaliente(String mensajeSaliente) {
+    public void setMensajeSaliente(final String mensajeSaliente) {
 
         this.mensajeSaliente = mensajeSaliente;
     }
 
-    private static String mezclar(String messageStr, String password) {
+    private static String mezclar(final String messageStr, final String password) {
 
-        StringBuilder message = new StringBuilder(messageStr);
+        final StringBuilder message = new StringBuilder(messageStr);
         for (int i = 0; i < password.length(); i++)
             message.insert((i * 42) + password.charAt(i), password.charAt(i));
 
@@ -130,6 +133,7 @@ public class Cliente {
         while (getLogin() != -2) {
             // System.out.print("MENU\n1.- Registro\n2.- Login\n0.- Salir.\n--> ");
             // opcion = in.nextInt();
+            System.out.println("Log"+getLogin());
             switch (getLogin()) {
                 case 0:
                     registro();
@@ -157,49 +161,36 @@ public class Cliente {
     }
 
     public void esperandoRecibir() throws UnknownHostException, IOException {
-        String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+        System.out.println("Esperando recibir chat");
+        final String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
         try {
             Socket socket = new Socket("localhost", 9999);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter salida = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-            if (entrada != null)
-                if (cifrado.descifrar(entrada.readLine(), clave).equals("chat")){
+            salida.println(cifrado.cifrar("5", clave));
+            String v;
+            if ((v = entrada.readLine())=="chat" ){
+                System.out.println("Esperando recibir chat"+v);
                     System.out.println("Recibi un chat");
                     setLogin(3);
-                }
-
-        } catch (UnknownHostException e) {
+            }
+          socket.close();
+        } catch (final UnknownHostException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            // TODO Auto-generated catch block
+        } catch (final Exception e) {
             e.printStackTrace();
         }
-  
     }
     public void registro() throws Exception {
 
-      String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+      final String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
       String entry;
-      String datos[] = new String[2];
+      final String datos[] = new String[2];
 
       try{
-          Socket socket = new Socket("localhost", 9999);
-          BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-          PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+          final Socket socket = new Socket("localhost", 9999);
+          final BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          final PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
 
           System.out.println("\nRegistro");
           datos[0] = getUsuario();
@@ -223,24 +214,23 @@ public class Cliente {
               }
           }
           socket.close();
-      }catch(UnknownHostException e){
+      }catch(final UnknownHostException e){
             e.printStackTrace();
-      }catch(IOException e){
+      }catch(final IOException e){
             e.printStackTrace();
       }
     }
 
     public void login() throws Exception {
 
-      String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+      final String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
       String mensaje = "", mezcla, entry, finalMd5, contacto, usuarioT;
-      String datos[] = new String[2];
+      final String datos[] = new String[2];
 
       try{
-          Socket socket = new Socket("localhost", 9999);
-          BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-          PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
-
+          final Socket socket = new Socket("localhost", 9999);
+          final BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          final PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
           System.out.println("\nLogin");
           datos[0] = getUsuario();
           datos[1] = getContrasenia();
@@ -280,9 +270,9 @@ public class Cliente {
               }
 
           socket.close();
-      } catch(UnknownHostException e){
+      } catch(final UnknownHostException e){
           e.printStackTrace();
-      } catch(IOException e){
+      } catch(final IOException e){
           e.printStackTrace();
       }
     }
@@ -290,10 +280,10 @@ public class Cliente {
     public void chat() throws Exception{
       
         try{
-            Socket socket = new Socket("localhost", 9999);
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
-            String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+            final Socket socket = new Socket("localhost", 9999);
+            final BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            final PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+            final String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
             String mensaje = " ";
             
             salida.println(cifrado.cifrar("2", clave));
@@ -313,23 +303,24 @@ public class Cliente {
                     break;
             }
             socket.close();
-        }catch(UnknownHostException e){
+        }catch(final UnknownHostException e){
               e.printStackTrace();
-        }catch(IOException e){
+        }catch(final IOException e){
               e.printStackTrace();
         }
+        setLogin(5);
     }
 
     public void recibirChat()throws Exception{
         
         try{
-            Socket socket = new Socket("localhost", 9999);
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
-            String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
+            final Socket socket = new Socket("localhost", 9999);
+            final BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            final PrintWriter salida = new PrintWriter( new OutputStreamWriter(socket.getOutputStream() ), true);
+            final String clave = "_#::==:/$$$%%%//=/%:&:[fgdg][hjjuuyrf]adwd>>###VVV-V###>>>ghghghg///&&,&";
             String mensaje = " ";
         
-            controlador.mostrarChat(cifrado.descifrar(S.readLine(), clave));
+            controlador.mostrarChat(cifrado.descifrar(entrada.readLine(), clave));
             while(true){
                 if(!mensajeSaliente.isEmpty()){
                     salida.println(mensajeSaliente);
@@ -345,11 +336,13 @@ public class Cliente {
                     break;
             }
             socket.close();
-        }catch(UnknownHostException e){
+        }catch(final UnknownHostException e){
               e.printStackTrace();
-        }catch(IOException e){
+        }catch(final IOException e){
               e.printStackTrace();
         }
+        setLogin(5);
+
     }
     /*public void cliente() throws Exception{
 

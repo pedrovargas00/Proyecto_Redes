@@ -32,6 +32,7 @@ public class VentanaContactos extends JFrame{
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent eve) {
                 controladorGrafico.mostrarLogin();
+                controladorGrafico.indicadorLogin(1);
                 cerrarContactos(0);
             }
         });

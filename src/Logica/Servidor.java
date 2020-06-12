@@ -385,6 +385,9 @@ class GestorPeticion extends Thread {
                             }
                         }
                        break;
+                    case 5:
+                        salida.println(cifrado.cifrar("no chat", clave));
+                        break;
                     case -2:
                         
                         /*

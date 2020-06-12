@@ -111,6 +111,7 @@ public class VentanaLogin extends JFrame  implements MouseListener{
           if(mostrar){
             cerrarLogin();
             controladorGrafico.mostrarContactos();
+            controladorGrafico.indicadorLogin(5);
           }else
             JOptionPane.showMessageDialog(null, "access denied", "", JOptionPane.ERROR_MESSAGE);
 

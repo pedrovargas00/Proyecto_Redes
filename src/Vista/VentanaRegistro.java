@@ -32,6 +32,7 @@ public class VentanaRegistro extends JFrame{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e){
                 controladorGrafico.mostrarLogin();
+                controladorGrafico.indicadorLogin(1);
                 cerrarRegistro();
             }
         });
@@ -136,6 +137,7 @@ public class VentanaRegistro extends JFrame{
       if(exito){
         JOptionPane.showMessageDialog(null, "Successful ", "", JOptionPane.DEFAULT_OPTION, exitoso);
         controladorGrafico.mostrarLogin();
+        controladorGrafico.indicadorLogin(1);
         cerrarRegistro();
       }else
         JOptionPane.showMessageDialog(null, "user already exists, try a different username", "", JOptionPane.ERROR_MESSAGE);
