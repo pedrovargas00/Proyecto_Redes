@@ -2,10 +2,7 @@ package Logica;
 import java.io.*;
 import static java.lang.System.exit;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Servidor{
 
@@ -16,9 +13,8 @@ public class Servidor{
     }
 
     private static void inicializar(){
-
       clientes = new ArrayList();
-      ruta = "C:/Users/linda/OneDrive/Escuela/Modelo de Redes/proyecto/Proyecto_Redes/bd.txt";
+      ruta = "C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes/bd.txt";
     }
 
     public String mezclar(String messageStr, String password){
@@ -47,16 +43,12 @@ public class Servidor{
         fw.close();
     }
 
-    private void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
+    public void agregarContacto(String usuario, String contacto) throws FileNotFoundException, IOException{
 
         RandomAccessFile archivo = new RandomAccessFile(ruta, "rw");
         String auxiliar, in[], cargaArchivo = "";
         long posicion;
 
-        if(verificarUsuario(contacto) != null || verificarUsuario(usuario)!= null){
-            System.out.println("Usuario no existe");
-            return;
-        }
         while((auxiliar = archivo.readLine()) != null){
             in = auxiliar.split(",");
             if(in[0].equalsIgnoreCase(usuario)){
@@ -99,9 +91,9 @@ public class Servidor{
         }
         return null;
     }
-    
+
     public ArrayList<String> obtenerUsuarios(String usuario)throws FileNotFoundException, IOException{
-      
+
       String[] in;
       String auxiliar;
       ArrayList<String> usuarios = new ArrayList<String>();
@@ -180,11 +172,13 @@ public class Servidor{
 
     public GestorPeticion buscarCliente(String contactoChat){
         for(int i=0;i < clientes.size(); i++){
+          System.out.println("Algo: " + contactoChat + " -> " + clientes.get(i).getNombre());
             if(clientes.get(i).getNombre().equals(contactoChat))
                 return clientes.get(i);
         }
         return null;
     }
+
       private static void servidor(String nombreArchivo) throws IOException{
 
         ServerSocket ss = null;
@@ -217,9 +211,10 @@ public class Servidor{
 
     public static void main(String[] args) throws IOException {
 
-        servidor("C:/Users/linda/OneDrive/Escuela/Modelo de Redes/proyecto/Proyecto_Redes/" + args[0]);
+        servidor("C:/Users/Beth/Documents/NetBeansProjects/Proyecto_Redes/" + args[0]);
 
     }
+
 }
 
 
@@ -233,14 +228,20 @@ class GestorPeticion extends Thread {
     private BufferedReader entrada;
     private PrintWriter salida;
     private String nombreUsuario;
-    public GestorPeticion(Socket s, String nombreArchivo){
 
+    public GestorPeticion(Socket s, String nombreArchivo){
         this.s = s;
         this.nombreArchivo = nombreArchivo;
         this.servidor = new Servidor();
         this.opcion = 0;
         this.md5 = new Md5();
+        this.nombreUsuario = "";
     }
+
+    public void setNombreUsuario(String nombre){
+      this.nombreUsuario = nombre;
+    }
+
     public BufferedReader getBufferEntrada(){
         return entrada;
     }
@@ -252,10 +253,10 @@ class GestorPeticion extends Thread {
     }
     public void run(){
         /*El diccionario de usuarios está aquí*/
-        
+
         Cifrado cifrado = new Cifrado();
         int opcion, ex = 0;
-        String datos[] = new String[2], mensajeCombinado, aleatorio, finalMd5, clienteMd5;
+        String datos[] = new String[2], mensajeCombinado, aleatorio;
         String contraUsuario;
         ArrayList<String> contactos;
         ArrayList<String> usuariosT = new ArrayList<String>();
@@ -265,11 +266,11 @@ class GestorPeticion extends Thread {
         Socket socketContacto;
         BufferedReader entradaContacto;
         PrintWriter salidaContacto;
-        
+
         try{
             entrada = new BufferedReader(new InputStreamReader(s.getInputStream()));
             salida = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())), true);
-            
+
             //entrada InputStream
             //salida OutputStream
             while(ex != -1){
@@ -284,13 +285,13 @@ class GestorPeticion extends Thread {
                                 servidor.darAlta(datos[0], datos[1], nombreArchivo);
                                 salida.println(cifrado.cifrar("Agregado", clave));
                                 System.out.println("Dado de alta");
-                                
+
                             } else{
                                 salida.println(cifrado.cifrar("Ya existe", clave));
                                 System.out.println("Usuario existente");
-                                
+
                             }
-                        
+
                     break;
                     case 1:
                         System.out.println("Login");
@@ -299,32 +300,25 @@ class GestorPeticion extends Thread {
                             System.out.println("Datos recibidos: " + datos[0]);
                             contraUsuario = servidor.verificarUsuario(datos[0]);
                             System.out.println("Datos: " + datos[0] + " " + datos[1]);
+                            System.out.println("Contrasenia 1 : " + contraUsuario);
                             if(contraUsuario != null){
-                                nombreUsuario = datos[0];
+                                setNombreUsuario(datos[0]);
                                 contraUsuario = contraUsuario.substring(1, contraUsuario.length());
+                                System.out.println("Contrasenia : " + contraUsuario);
                                 aleatorio = servidor.mensajeAleatorio();
                                 mensajeCombinado = servidor.mezclar(aleatorio, contraUsuario);
                                 salida.println(cifrado.cifrar("1", clave));
                                 salida.println(aleatorio);
                                 //Llama MD5
-                                finalMd5 = md5.algoritmoMd5(mensajeCombinado);
-                                clienteMd5 = entrada.readLine();
-                                if(finalMd5.equalsIgnoreCase(clienteMd5)){
+                                if(md5.algoritmoMd5(mensajeCombinado).equalsIgnoreCase(entrada.readLine())){
                                     salida.println(cifrado.cifrar("9", clave));
                                     salida.println(cifrado.cifrar("\n****TIENE ACCESO****", clave));
                                     System.out.println("Acceso permitido");
-                                    //salida.close();
-                                    //entrada.close();
-                                    //exit(1);
-
-                                    //Carga usuarios
 
                                     usuariosT = servidor.obtenerUsuarios(datos[0]);
-                                    if(usuariosT.isEmpty()){
+                                    if(usuariosT.isEmpty())
                                       System.out.println("No hay usuarios-Login");
-                                      exit(1);
-                                    }
-                                    System.out.println("Obteniendo usuarios");
+                                    System.out.println("Mandando usuarios");
                                     for(int i = 0; i < usuariosT.size(); i++){
                                         System.out.println(usuariosT.get(i));
                                         salida.println(usuariosT.get(i));
@@ -337,18 +331,14 @@ class GestorPeticion extends Thread {
                                         for(int i = 0; i < contactos.size(); i++)
                                             salida.println(contactos.get(i));
                                     }
-                                    contactos.clear();
                                     salida.println("-1");
+                                    contactos.clear();
                                     //Continúa para chat
                                 } else{
                                     System.out.println("Entra a no final");
                                     salida.println(cifrado.cifrar("9", clave));
                                     salida.println(cifrado.cifrar("\n****NO TIENE ACCESO****", clave));
                                     System.out.println("Acceso denegado");
-                                    
-                                    //salida.close();
-                                    //entrada.close();
-                                    //exit(1);
                                 }
                                 //Continúa para Chat
                             } else{
@@ -356,12 +346,13 @@ class GestorPeticion extends Thread {
                                 break;
                             }
                         break;
-                        
+
                     case 2:
                         System.out.println("Chat");
                         //Iniciar el chat
                         //Enviar la señal al cliente
                         nombreContacto = cifrado.descifrar(entrada.readLine(), clave);
+                        System.out.println("Nombre del contacto  "+ nombreContacto);
                         GestorPeticion petDestino = servidor.buscarCliente(nombreContacto);
                         entradaContacto = petDestino.getBufferEntrada();
                         salidaContacto = petDestino.getBufferSalida();
@@ -385,18 +376,24 @@ class GestorPeticion extends Thread {
                             }
                         }
                        break;
+                    case 4:
+                      servidor.eliminarContactos(nombreUsuario, cifrado.descifrar(entrada.readLine(), clave));
+                      break;
                     case 5:
                         salida.println(cifrado.cifrar("no chat", clave));
                         break;
+                    case 6:
+                      servidor.agregarContacto(nombreUsuario, cifrado.descifrar(entrada.readLine(), clave));
+                      break;
                     case -2:
-                        
+
                         /*
                          Entra a ciclo
                         C1 envíe el nombre del contacto
                         Obtiene el socket
                         entrada = new BufferedReader(new InputStreamReader(sC2.getInputStream()));
                         salida = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sC2.getOutputStream())), true);
-                        
+
                          */
                         System.out.println("Saliendo de servidor");
                         ex = -1;

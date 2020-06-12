@@ -101,23 +101,24 @@ public class ControladorGrafico{
             this.setvChat(vChat);
             vChat.setControladorGrafico(this);
             vChat.setVisible(true);
+            cliente.setContacto(nombreContacto);
         }
+       cliente.setLogin(2);
     }
-    
+
     public void actualizarContactos(){
       vU.cerrarUsuarios();
       vC = new VentanaContactos(cliente.getContactos());
       vC.setControladorGrafico(this);
       this.setvC(vC);
     }
-    
+
     public void mostrarUsuarios(){
         if(this.getvU() != null)
             this.getvU().mostrarUsuarios();
         else{
           System.out.println("ventana"+cliente.getUsuarios().get(0));
-          ArrayList<String> a = cliente.getUsuarios();
-            vU = new VentanaUsuarios(a);
+            vU = new VentanaUsuarios(cliente.getUsuarios(), cliente.getContactos());
             vU.setControladorGrafico(this);
             this.setvU(vU);
             vU.setVisible(true);
@@ -126,12 +127,6 @@ public class ControladorGrafico{
 
     public void mostrarLogin(){
         vLogin.mostrarLogin();
-    }
-
-    public boolean existeUsuario(String usuario){
-        System.out.println("Usuario: " + usuario );
-    //return modelo.existeUsuraio(usuario)
-      return false;
     }
 
     public void indicadorLogin(int login){
@@ -153,28 +148,28 @@ public class ControladorGrafico{
     public void registro(boolean registrado){
         vR.registroExitoso(registrado);
     }
-    
+
     public boolean esContacto(String nombre){
       for(int i=0; i<cliente.getContactos().size();i++)
         if(nombre.equals(cliente.getContactos().get(i)))
           return true;
       return false;
     }
-    
+
     public void eliminarContacto(String nombre){
-      for(int i=0; i<cliente.getContactos().size();i++)
-        if(nombre.equals(cliente.getContactos().get(i)))
-          cliente.getContactos().remove(i);
+      cliente.setContactoModificar(nombre);
+      cliente.setLogin(4);
     }
-    
+
     public void agregarContacto(String nuevoContacto){
-      getCliente().getContactos().add(nuevoContacto);
+      cliente.setContactoModificar(nuevoContacto);
+      cliente.setLogin(6);
     }
-    
+
     public void enviarMensaje(String mensaje){
         cliente.setMensajeSaliente(mensaje);
     }
-    
+
     public void recibirMensaje(String mensaje){
         vChat.setMensaje(mensaje);
     }

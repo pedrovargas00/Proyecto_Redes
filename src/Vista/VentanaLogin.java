@@ -102,7 +102,6 @@ public class VentanaLogin extends JFrame  implements MouseListener{
             if(usuario.length() != 0 && pass.length() != 0){
                 controladorGrafico.datosLogin(usuario, pass);
                 controladorGrafico.indicadorLogin(1);
-                //controladorGrafico.mostrarContactos();
             }
         });
     }
@@ -114,7 +113,6 @@ public class VentanaLogin extends JFrame  implements MouseListener{
             controladorGrafico.indicadorLogin(5);
           }else
             JOptionPane.showMessageDialog(null, "access denied", "", JOptionPane.ERROR_MESSAGE);
-
     }
     public String getUsuario(){
 
@@ -153,9 +151,9 @@ public class VentanaLogin extends JFrame  implements MouseListener{
     }
 
     public void cerrarLogin(){
-            this.setVisible(false);
+        this.setVisible(false);
     }
     public void mostrarLogin(){
-          this.setVisible(true);
+        this.setVisible(true);
     }
 }

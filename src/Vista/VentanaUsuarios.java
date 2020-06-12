@@ -17,7 +17,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
     private final Font fuenteNombres = new Font("Comic sans MS", Font.PLAIN, 20);
     private final Color LightBlue = new Color(173, 216, 230);
 
-    public VentanaUsuarios(ArrayList<String> nombresUsuarios){
+    public VentanaUsuarios(ArrayList<String> nombresUsuarios, ArrayList<String> nombresContactos){
         super("Usuarios");
         this.setSize(400, 550);
         this.setResizable(false);
@@ -26,7 +26,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
 
-        initComponentes(nombresUsuarios);
+        initComponentes(nombresUsuarios, nombresContactos);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 controladorGrafico.mostrarContactos();
@@ -43,7 +43,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
         this.controladorGrafico = controladorGrafico;
     }
 
-    public final void initComponentes(ArrayList<String> nombresUsuarios){
+    public final void initComponentes(ArrayList<String> nombresUsuarios, ArrayList<String> nombresContactos){
 
         if(!nombresUsuarios.isEmpty()){
             bAgregar = new ArrayList<>();
@@ -61,7 +61,10 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
 
                 JButton b = new JButton();
                 b.setSize(45, 45);
-                b.setIcon(agregar);
+                if(nombresContactos.contains(nombresUsuarios.get(i)))
+                  b.setIcon(agregado);
+                else
+                  b.setIcon(agregar);
                 b.setLocation(x2,y);
                 b.addMouseListener(this);
                 b.setBackground(LightBlue);
@@ -114,7 +117,7 @@ public class VentanaUsuarios extends JFrame implements MouseListener {
            this.setVisible(false);
     }
     public void mostrarUsuarios(){
-            controladorGrafico.indicadorLogin(5);
+          controladorGrafico.indicadorLogin(5);
           this.setVisible(true);
     }
 }

@@ -28,11 +28,11 @@ public class VentanaContactos extends JFrame{
         this.setVisible(true);
 
         initComponentes(nombresContactos);
-        
+
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent eve) {
+                controladorGrafico.indicadorLogin(-1);
                 controladorGrafico.mostrarLogin();
-                controladorGrafico.indicadorLogin(1);
                 cerrarContactos(0);
             }
         });
@@ -125,7 +125,6 @@ public class VentanaContactos extends JFrame{
       }else{
         for(int i = 0; i < bConversar.size(); i++){
           if (boton.equals(bConversar.get(i))){
-           controladorGrafico.indicadorLogin(2);
            controladorGrafico.mostrarChat(lContactos.get(i).getText());
            cerrarContactos(1);
           }
